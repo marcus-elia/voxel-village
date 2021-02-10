@@ -18,6 +18,7 @@ public struct Point2D
 
 public class ChunkManager : MonoBehaviour
 {
+    // Chunk-related variables
     public static int chunkSize = 20;
     public static float chunkHeightStep = 1f;
     public Transform playerTransform;
@@ -28,6 +29,11 @@ public class ChunkManager : MonoBehaviour
 
     public GameObject ChunkPrefab;
 
+    // Perlin noise variables
+    public static int seed = 2;
+    private static int noiseScale = 2;
+    private static int numOctaves = 5;
+
     //public Slider renderRadiusSlider;
 
     //public AudioSource backgroundMusic;
@@ -37,6 +43,7 @@ public class ChunkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        seed = (int)Time.time;
         currentPlayerChunkID = getChunkIDContainingPoint(playerTransform.position, chunkSize);
         allSeenChunks = new Dictionary<int, GameObject>();
         currentChunks = new List<GameObject>();
@@ -100,7 +107,12 @@ public class ChunkManager : MonoBehaviour
                 GameObject c = Instantiate(ChunkPrefab);
                 c.GetComponent<Chunk>().SetChunkID(id);
                 c.GetComponent<Chunk>().SetSideLength(chunkSize);
-                c.GetComponent<Chunk>().SetGroundHeight(chunkHeightStep);
+
+                // Get the Perlin value for the new chunk
+                Vector2 offset = chunkIDtoVector2(id);
+                float[,] newHeightMap = Noise.GenerateNoiseMap(1, 1, seed, noiseScale, numOctaves, 0.5f, 2, offset);
+                Debug.Log(newHeightMap[0, 0]);
+                c.GetComponent<Chunk>().SetPerlinValue(newHeightMap[0,0]);
                 c.GetComponent<Chunk>().InitializeGround();
                 c.GetComponent<Chunk>().SetPlayerTransform(playerTransform);
                 c.GetComponent<Chunk>().EnableChunk();
@@ -173,6 +185,12 @@ public class ChunkManager : MonoBehaviour
                 return new Point2D(-(sq + 1) / 2 + s - n, (sq + 1) / 2 - 1);
             }
         }
+    }
+    // Wrapper
+    public static Vector2 chunkIDtoVector2(int n)
+    {
+        Point2D converted = chunkIDtoPoint2D(n);
+        return new Vector2(converted.x, converted.z);
     }
     // Convert the coordinates of the chunk to the ChunkID
     public static int chunkCoordsToChunkID(int a, int b)

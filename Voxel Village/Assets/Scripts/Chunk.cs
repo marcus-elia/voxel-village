@@ -8,6 +8,10 @@ public class Chunk : MonoBehaviour
     private int chunkID;
     private Point2D chunkCoords; // top left
     private int sideLength;
+    private int perlinValue;
+    private float groundHeight;
+    private static int perlinResolution = 10;
+    private static float groundHeightStep = 1f;
 
     public GameObject groundPrefab;
     public Material lowMaterial;
@@ -15,7 +19,6 @@ public class Chunk : MonoBehaviour
     private GameObject ground;
 
     private Transform playerTransform;
-    private float groundHeight;
 
     // Start is called before the first frame update
     void Start()
@@ -60,9 +63,14 @@ public class Chunk : MonoBehaviour
     {
         playerTransform = input;
     }
-    public void SetGroundHeight(float inputHeight)
+    public void SetPerlinValue(float inputPerlinValue)
     {
-        groundHeight = inputHeight;
+        perlinValue = (int)Mathf.Floor(perlinResolution*inputPerlinValue + 1);
+        this.ComputeGroundHeight();
+    }
+    public void ComputeGroundHeight()
+    {
+        groundHeight = perlinValue * groundHeightStep;
     }
 
     // Returns a random point on the plane of this chunk, that is not within buffer of the border
