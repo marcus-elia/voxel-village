@@ -46,3 +46,4 @@ MonoBehaviour:
   groundPrefab: {fileID: 923796564345515403, guid: 8ac32ec278759134ba0e711c21ad56d0,
     type: 3}
   lowMaterial: {fileID: 2100000, guid: 6196de60bff73104a93344d894581dd5, type: 2}
+  highMaterial: {fileID: 2100000, guid: 336186039d8e2164a8c6028aebe76030, type: 2}

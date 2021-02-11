@@ -15,6 +15,7 @@ public class Chunk : MonoBehaviour
 
     public GameObject groundPrefab;
     public Material lowMaterial;
+    public Material highMaterial;
 
     private GameObject ground;
 
@@ -47,7 +48,14 @@ public class Chunk : MonoBehaviour
         ground = Instantiate(groundPrefab);
         ground.transform.position = transform.position + Vector3.up*groundHeight/2;
         ground.transform.localScale = new Vector3(sideLength, groundHeight, sideLength);
-        ground.GetComponent<Renderer>().material = lowMaterial;
+        if(groundHeight < perlinResolution*groundHeightStep / 2)
+        {
+            ground.GetComponent<Renderer>().material = lowMaterial;
+        }
+        else
+        {
+            ground.GetComponent<Renderer>().material = highMaterial;
+        }
     }
     public void SetChunkID(int inputID)
     {

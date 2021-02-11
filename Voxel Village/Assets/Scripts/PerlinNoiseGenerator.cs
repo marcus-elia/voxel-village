@@ -27,7 +27,7 @@ public class PerlinNoiseGenerator : MonoBehaviour
         float topLeft = GetFixedValue(NearestMultipleDown(x, fixedDistance), NearestMultipleUp(y, fixedDistance));
         float topRight = GetFixedValue(NearestMultipleUp(x, fixedDistance), NearestMultipleUp(y, fixedDistance));
         float bottomLeft = GetFixedValue(NearestMultipleDown(x, fixedDistance), NearestMultipleDown(y, fixedDistance));
-        float bottomRight = GetFixedValue(NearestMultipleUp(x, fixedDistance), NearestMultipleUp(y, fixedDistance));
+        float bottomRight = GetFixedValue(NearestMultipleUp(x, fixedDistance), NearestMultipleDown(y, fixedDistance));
 
         // Interpolate
         float xScale = (x % fixedDistance) / (float)fixedDistance;
@@ -38,7 +38,7 @@ public class PerlinNoiseGenerator : MonoBehaviour
         float areaBL = xScale * yScale;
         float areaBR = (1 - xScale) * yScale;
 
-        return (areaBR * topLeft + areaBL * topRight + areaTR * bottomLeft + areaTL * bottomRight) / area;
+        return areaBR * topLeft + areaBL * topRight + areaTR * bottomLeft + areaTL * bottomRight;
     }
 
     // The primary function
@@ -46,12 +46,10 @@ public class PerlinNoiseGenerator : MonoBehaviour
     {
         if(x % fixedDistance == 0 && y % fixedDistance == 0)
         {
-            Debug.Log(x.ToString() + ", " + y.ToString() + ": " + GetFixedValue(x, y));
             return GetFixedValue(x, y);
         }
         else
         {
-            Debug.Log(x.ToString() + ", " + y.ToString() + ": " + GetInterpolatedValue(x, y));
             return GetInterpolatedValue(x, y);
         }
     }
