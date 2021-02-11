@@ -32,7 +32,7 @@ public class ChunkManager : MonoBehaviour
     // Perlin noise variables
     public static int seed = 2;
     private static int noiseScale = 2;
-    private static int numOctaves = 5;
+    private static int numOctaves = 3;
 
     //public Slider renderRadiusSlider;
 
@@ -43,7 +43,13 @@ public class ChunkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        seed = (int)Time.time;
+        //seed = (int)Time.time;
+        int modulus = 65536;
+        PerlinNoiseGenerator.SetA(modulus/2 + Mathf.FloorToInt(Random.Range(0, modulus/2)));
+        PerlinNoiseGenerator.SetB(modulus/2 + Mathf.FloorToInt(Random.Range(0, modulus/2)));
+        PerlinNoiseGenerator.SetC(Mathf.FloorToInt(Random.Range(0, modulus)));
+        PerlinNoiseGenerator.SetModulus(modulus);
+
         currentPlayerChunkID = getChunkIDContainingPoint(playerTransform.position, chunkSize);
         allSeenChunks = new Dictionary<int, GameObject>();
         currentChunks = new List<GameObject>();
@@ -109,10 +115,12 @@ public class ChunkManager : MonoBehaviour
                 c.GetComponent<Chunk>().SetSideLength(chunkSize);
 
                 // Get the Perlin value for the new chunk
-                Vector2 offset = chunkIDtoVector2(id);
-                float[,] newHeightMap = Noise.GenerateNoiseMap(1, 1, seed, noiseScale, numOctaves, 0.5f, 2, offset);
-                Debug.Log(newHeightMap[0, 0]);
-                c.GetComponent<Chunk>().SetPerlinValue(newHeightMap[0,0]);
+                //Vector2 offset = chunkIDtoVector2(id);
+                //float[,] newHeightMap = Noise.GenerateNoiseMap(1, 1, seed, noiseScale, numOctaves, 0.5f, 2, offset);
+                //Debug.Log(newHeightMap[0, 0]);
+                float perlin = PerlinNoiseGenerator.GetRandomValue(chunkIDtoPoint2D(id));
+                //Debug.Log(perlin);
+                c.GetComponent<Chunk>().SetPerlinValue(perlin);
                 c.GetComponent<Chunk>().InitializeGround();
                 c.GetComponent<Chunk>().SetPlayerTransform(playerTransform);
                 c.GetComponent<Chunk>().EnableChunk();

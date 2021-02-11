@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 8011109477685584891}
   - component: {fileID: 8484041371825447284}
   - component: {fileID: 7321094403640381153}
-  m_Layer: 0
-  m_Name: Cube
+  m_Layer: 8
+  m_Name: GroundPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

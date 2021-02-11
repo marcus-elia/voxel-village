@@ -10,7 +10,7 @@ public class Chunk : MonoBehaviour
     private int sideLength;
     private int perlinValue;
     private float groundHeight;
-    private static int perlinResolution = 10;
+    private static int perlinResolution = 15;
     private static float groundHeightStep = 1f;
 
     public GameObject groundPrefab;
@@ -66,6 +66,7 @@ public class Chunk : MonoBehaviour
     public void SetPerlinValue(float inputPerlinValue)
     {
         perlinValue = (int)Mathf.Floor(perlinResolution*inputPerlinValue + 1);
+        perlinValue = Mathf.Max(perlinValue, 1);
         this.ComputeGroundHeight();
     }
     public void ComputeGroundHeight()
