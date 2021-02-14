@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Chunk : MonoBehaviour
 {
     // Basic chunk properties
@@ -12,14 +13,23 @@ public class Chunk : MonoBehaviour
     private float groundHeight;
     private static int perlinResolution = 15;
     private static float groundHeightStep = 1f;
+    private static int minBuildingSize = 5;
+    private static int maxBuildingSize = 9;
 
     public GameObject groundPrefab;
+    public GameObject cubePrefab;
+    public GameObject buildingPrefab;
+
     public Material lowMaterial;
     public Material highMaterial;
 
     private GameObject ground;
 
     private Transform playerTransform;
+
+    // Keep track of buildings
+    private List<BuildingInfo> footprints = new List<BuildingInfo>();
+    private List<GameObject> buildings = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -35,11 +45,19 @@ public class Chunk : MonoBehaviour
     public void EnableChunk()
     {
         ground.SetActive(true);
+        for(int i = 0; i < buildings.Count; i++)
+        {
+            buildings[i].GetComponent<Building>().EnableRendering();
+        }
     }
 
     public void DisableChunk()
     {
         ground.SetActive(false);
+        for (int i = 0; i < buildings.Count; i++)
+        {
+            buildings[i].GetComponent<Building>().DisableRendering();
+        }
     }
 
     // Setters
@@ -90,6 +108,69 @@ public class Chunk : MonoBehaviour
         return transform.position + new Vector3(randomX, 0f, randomZ);
     }
 
+    public void AttemptToGenerateBuilding(int numAttempts)
+    {
+        int i = 0;
+        while (i < numAttempts)
+        {
+            i++;
+            int randXDim = Mathf.FloorToInt(Random.Range(minBuildingSize, maxBuildingSize + 1));
+            int randZDim = Mathf.FloorToInt(Random.Range(minBuildingSize, maxBuildingSize + 1));
 
+            int bottomLeftX = Mathf.FloorToInt(Random.Range(0, sideLength - randXDim));
+            int bottomLeftZ = Mathf.FloorToInt(Random.Range(0, sideLength - randZDim));
+            Point2D potentialCorner = new Point2D(bottomLeftX, bottomLeftZ);
+
+            if(!OverlapsExistingFootprint(potentialCorner, randXDim, randZDim))
+            {
+                BuildingInfo info = new BuildingInfo(potentialCorner, randXDim, randZDim);
+                Vector3 bottomLeft = GetWorldCoordinates(potentialCorner);
+                CreateBuilding(info, bottomLeft);
+            }
+        }
+    }
+
+    private bool FootprintsOverlap(Point2D corner1, int w1, int h1, Point2D corner2, int w2, int h2)
+    {
+        bool disjointX = corner2.x > corner1.x + w1 || corner1.x > corner2.x + w2;
+        bool disjointZ = corner2.z > corner1.z + h1 || corner1.z > corner2.z + h2;
+        return !(disjointX || disjointZ);
+    }
+    // Wrapper
+    private bool OverlapsBuildingInfo(BuildingInfo existing, Point2D corner, int w, int h)
+    {
+        return FootprintsOverlap(existing.bottomLeft, existing.xWidth, existing.zWidth, corner, w, h);
+    }
+
+    private bool OverlapsExistingFootprint(Point2D corner, int w, int h)
+    {
+        for(int i = 0; i < footprints.Count; i++)
+        {
+            if(OverlapsBuildingInfo(footprints[i], corner, w, h))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Given that p is an index of a square in this chunk, find the actual world
+    // coordinates of the bottom left of the square
+    public Vector3 GetWorldCoordinates(Point2D p)
+    {
+        float x = chunkCoords.x * sideLength + p.x;
+        float z = chunkCoords.z * sideLength + p.z;
+        return new Vector3(x, groundHeight, z);
+    }
+
+    private void CreateBuilding(BuildingInfo info, Vector3 bottomLeft)
+    {
+        GameObject building = Instantiate(buildingPrefab);
+        building.GetComponent<Building>().SetFootprint(info);
+        building.GetComponent<Building>().SetTrueBottomLeft(bottomLeft);
+        building.GetComponent<Building>().CreateVoxels();
+        footprints.Add(info);
+        buildings.Add(building);
+    }
 }
 

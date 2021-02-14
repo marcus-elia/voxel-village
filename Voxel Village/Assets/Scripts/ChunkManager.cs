@@ -115,14 +115,11 @@ public class ChunkManager : MonoBehaviour
                 c.GetComponent<Chunk>().SetSideLength(chunkSize);
 
                 // Get the Perlin value for the new chunk
-                //Vector2 offset = chunkIDtoVector2(id);
-                //float[,] newHeightMap = Noise.GenerateNoiseMap(1, 1, seed, noiseScale, numOctaves, 0.5f, 2, offset);
-                //Debug.Log(newHeightMap[0, 0]);
                 float perlin = PerlinNoiseGenerator.GetRandomValue(chunkIDtoPoint2D(id));
-                //Debug.Log(perlin);
                 c.GetComponent<Chunk>().SetPerlinValue(perlin);
                 c.GetComponent<Chunk>().InitializeGround();
                 c.GetComponent<Chunk>().SetPlayerTransform(playerTransform);
+                c.GetComponent<Chunk>().AttemptToGenerateBuilding(5);
                 c.GetComponent<Chunk>().EnableChunk();
                 allSeenChunks.Add(id, c);
                 currentChunks.Add(c);
