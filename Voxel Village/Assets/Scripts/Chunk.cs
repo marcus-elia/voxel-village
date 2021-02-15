@@ -124,8 +124,9 @@ public class Chunk : MonoBehaviour
             if(!OverlapsExistingFootprint(potentialCorner, randXDim, randZDim))
             {
                 BuildingInfo info = new BuildingInfo(potentialCorner, randXDim, randZDim);
-                Vector3 bottomLeft = GetWorldCoordinates(potentialCorner);
-                CreateBuilding(info, bottomLeft);
+                //Vector3 bottomLeft = GetWorldCoordinates(potentialCorner);
+                Vector3 centerBase = CalculateBuildingCenterBase(potentialCorner, randXDim, randZDim);
+                CreateBuilding(info, centerBase);
             }
         }
     }
@@ -162,12 +163,22 @@ public class Chunk : MonoBehaviour
         float z = chunkCoords.z * sideLength + p.z;
         return new Vector3(x, groundHeight, z);
     }
+    public Vector3 CalculateBuildingCenterBase(Point2D potentialCorner, int randXDim, int randZDim)
+    {
+        float x = chunkCoords.x * sideLength + potentialCorner.x + randXDim / 2f;
+        float z = chunkCoords.z * sideLength + potentialCorner.z + randZDim / 2f;
+        return new Vector3(x, groundHeight, z);
+    }
 
-    private void CreateBuilding(BuildingInfo info, Vector3 bottomLeft)
+    private void CreateBuilding(BuildingInfo info, Vector3 centerBase)
     {
         GameObject building = Instantiate(buildingPrefab);
         building.GetComponent<Building>().SetFootprint(info);
-        building.GetComponent<Building>().SetTrueBottomLeft(bottomLeft);
+        //building.GetComponent<Building>().SetTrueBottomLeft(bottomLeft);
+        building.GetComponent<Building>().SetTrueCenterBase(centerBase);
+        building.transform.position = centerBase;
+        Debug.Log("new building centered at");
+        Debug.Log(centerBase);
         building.GetComponent<Building>().CreateVoxels();
         footprints.Add(info);
         buildings.Add(building);

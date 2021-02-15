@@ -119,7 +119,7 @@ public class ChunkManager : MonoBehaviour
                 c.GetComponent<Chunk>().SetPerlinValue(perlin);
                 c.GetComponent<Chunk>().InitializeGround();
                 c.GetComponent<Chunk>().SetPlayerTransform(playerTransform);
-                c.GetComponent<Chunk>().AttemptToGenerateBuilding(5);
+                c.GetComponent<Chunk>().AttemptToGenerateBuilding(1);
                 c.GetComponent<Chunk>().EnableChunk();
                 allSeenChunks.Add(id, c);
                 currentChunks.Add(c);

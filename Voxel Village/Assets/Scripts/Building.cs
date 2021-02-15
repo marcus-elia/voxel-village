@@ -23,13 +23,16 @@ public enum Side { Top, Left, Bottom, Right };
 public class Building : MonoBehaviour
 {
     public GameObject cube;
+    public GameObject wallPrefab;
     public Material buildingMat1;
 
 
     private BuildingInfo footprint;
     private Vector3 trueBottomLeft;
+    private Vector3 trueCenterBase;
     private Side doorSide;
     private List<GameObject> voxels = new List<GameObject>();
+    private List<GameObject> gameObjects = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -52,18 +55,23 @@ public class Building : MonoBehaviour
     {
         trueBottomLeft = input;
     }
+    public void SetTrueCenterBase(Vector3 input)
+    {
+        trueCenterBase = input;
+        transform.position = trueCenterBase;
+    }
     public void EnableRendering()
     {
-        for(int i = 0; i < voxels.Count; i++)
+        for(int i = 0; i < gameObjects.Count; i++)
         {
-            voxels[i].SetActive(true);
+            gameObjects[i].SetActive(true);
         }
     }
     public void DisableRendering()
     {
-        for (int i = 0; i < voxels.Count; i++)
+        for (int i = 0; i < gameObjects.Count; i++)
         {
-            voxels[i].SetActive(false);
+            gameObjects[i].SetActive(false);
         }
     }
 
@@ -102,187 +110,89 @@ public class Building : MonoBehaviour
 
     private void CreateTop()
     {
-        int length = footprint.xWidth;
-        float y = trueBottomLeft.y + 0.5f;
-        if(doorSide == Side.Top)
-        {
-            // Randomly put the door along the side
-            int doorLoc = Mathf.FloorToInt(Random.Range(1, length - 1));
+        int topDoorLoc = (doorSide == Side.Top) ? Mathf.FloorToInt(Random.Range(0, footprint.xWidth - 2)) : -1;
+        GameObject wall = Instantiate(wallPrefab);
+        wall.GetComponent<Wall>().SetLength(footprint.xWidth - 2);
+        wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
+        wall.GetComponent<Wall>().SetNumFloors(1);
+        wall.GetComponent<Wall>().SetHeightPerFloor(4);
+        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().CreateVoxels();
 
-            // Build the voxel left of the door
-            GameObject leftVoxel = Instantiate(cube);
-            int xWidth = doorLoc;
-            float xCenter = trueBottomLeft.x + xWidth / 2f;
-            float zCenter = trueBottomLeft.z + footprint.zWidth - 0.5f;
-            leftVoxel.transform.localScale = new Vector3(xWidth, 1, 1);
-            leftVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-            leftVoxel.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(leftVoxel);
+        // Put the wall in the correct position
+        wall.transform.parent = transform;
+        float x = 0f;
+        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float z = (footprint.zWidth - 1)/2f;
+        wall.transform.localPosition = new Vector3(x, y, z);
+        wall.transform.Rotate(Vector3.up, 180f);
 
-            // Build the voxel right of the door
-            GameObject rightVoxel = Instantiate(cube);
-            xWidth = footprint.xWidth - doorLoc - 1;
-            xCenter = trueBottomLeft.x + doorLoc + 1f + xWidth / 2f;
-            zCenter = trueBottomLeft.z + footprint.zWidth - 0.5f;
-            rightVoxel.transform.localScale = new Vector3(xWidth, 1, 1);
-            rightVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-            rightVoxel.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(rightVoxel);
-        }
-        else
-        {
-            GameObject wall = Instantiate(cube);
-            int xWidth = footprint.xWidth;
-            float xCenter = trueBottomLeft.x + xWidth / 2f;
-            float zCenter = trueBottomLeft.z + footprint.zWidth - 0.5f;
-            wall.transform.localScale = new Vector3(xWidth, 1, 1);
-            wall.transform.position = new Vector3(xCenter, y, zCenter);
-            wall.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(wall);
-        }
-    }
-
-    private void CreateLeft()
-    {
-        int length = footprint.zWidth - 2;
-        float y = trueBottomLeft.y + 0.5f;
-        if (doorSide == Side.Left)
-        {
-            // Randomly put the door along the side
-            int doorLoc = Mathf.FloorToInt(Random.Range(0, length));
-
-            int zWidth; float xCenter, zCenter;
-            // Build the voxel below the door
-            if(doorLoc > 0)
-            {
-                GameObject lowerVoxel = Instantiate(cube);
-                zWidth = doorLoc;
-                xCenter = trueBottomLeft.x + 0.5f;
-                zCenter = trueBottomLeft.z + 1f + zWidth/2f;
-                lowerVoxel.transform.localScale = new Vector3(1, 1, zWidth);
-                lowerVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-                lowerVoxel.GetComponent<Renderer>().material = buildingMat1;
-                voxels.Add(lowerVoxel);
-            }
-            
-            // Build the voxel above the door
-            if(doorLoc < length - 1)
-            {
-                GameObject upperVoxel = Instantiate(cube);
-                zWidth = length - doorLoc - 1;
-                xCenter = trueBottomLeft.x + 0.5f;
-                zCenter = trueBottomLeft.z + 1f + 1f + doorLoc + zWidth / 2f;
-                upperVoxel.transform.localScale = new Vector3(1, 1, zWidth);
-                upperVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-                upperVoxel.GetComponent<Renderer>().material = buildingMat1;
-                voxels.Add(upperVoxel);
-            }
-            
-        }
-        // If this side does not have a door, it is one continuous wall
-        else
-        {
-            GameObject wall = Instantiate(cube);
-            int zWidth = length;
-            float xCenter = trueBottomLeft.x + 0.5f;
-            float zCenter = trueBottomLeft.z + 1f + zWidth / 2f;
-            wall.transform.localScale = new Vector3(1, 1, zWidth);
-            wall.transform.position = new Vector3(xCenter, y, zCenter);
-            wall.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(wall);
-        }
+        gameObjects.Add(wall);
     }
 
     private void CreateBottom()
     {
-        int length = footprint.xWidth;
-        float y = trueBottomLeft.y + 0.5f;
-        if (doorSide == Side.Bottom)
-        {
-            // Randomly put the door along the side
-            int doorLoc = Mathf.FloorToInt(Random.Range(1, length - 1));
+        int topDoorLoc = (doorSide == Side.Bottom) ? Mathf.FloorToInt(Random.Range(0, footprint.xWidth - 2)) : -1;
+        GameObject wall = Instantiate(wallPrefab);
+        wall.GetComponent<Wall>().SetLength(footprint.xWidth - 2);
+        wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
+        wall.GetComponent<Wall>().SetNumFloors(1);
+        wall.GetComponent<Wall>().SetHeightPerFloor(4);
+        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().CreateVoxels();
 
-            // Build the voxel left of the door
-            GameObject leftVoxel = Instantiate(cube);
-            int xWidth = doorLoc;
-            float xCenter = trueBottomLeft.x + xWidth / 2f;
-            float zCenter = trueBottomLeft.z + 0.5f;
-            leftVoxel.transform.localScale = new Vector3(xWidth, 1, 1);
-            leftVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-            leftVoxel.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(leftVoxel);
+        // Put the wall in the correct position
+        wall.transform.parent = transform;
+        float x = 0f;
+        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float z = -(footprint.zWidth - 1) / 2f;
+        wall.transform.localPosition = new Vector3(x, y, z);
+        wall.transform.Rotate(Vector3.up, 0f);
 
-            // Build the voxel right of the door
-            GameObject rightVoxel = Instantiate(cube);
-            xWidth = footprint.xWidth - doorLoc - 1;
-            xCenter = trueBottomLeft.x + doorLoc + 1f + xWidth / 2f;
-            zCenter = trueBottomLeft.z + 0.5f;
-            rightVoxel.transform.localScale = new Vector3(xWidth, 1, 1);
-            rightVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-            rightVoxel.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(rightVoxel);
-        }
-        else
-        {
-            GameObject wall = Instantiate(cube);
-            int xWidth = footprint.xWidth;
-            float xCenter = trueBottomLeft.x + xWidth / 2f;
-            float zCenter = trueBottomLeft.z + 0.5f;
-            wall.transform.localScale = new Vector3(xWidth, 1, 1);
-            wall.transform.position = new Vector3(xCenter, y, zCenter);
-            wall.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(wall);
-        }
+        gameObjects.Add(wall);
+    }
+
+    private void CreateLeft()
+    {
+        int topDoorLoc = (doorSide == Side.Left) ? Mathf.FloorToInt(Random.Range(0, footprint.xWidth - 2)) : -1;
+        GameObject wall = Instantiate(wallPrefab);
+        wall.GetComponent<Wall>().SetLength(footprint.zWidth - 2);
+        wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
+        wall.GetComponent<Wall>().SetNumFloors(1);
+        wall.GetComponent<Wall>().SetHeightPerFloor(4);
+        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().CreateVoxels();
+
+        // Put the wall in the correct position
+        wall.transform.parent = transform;
+        float x = -(footprint.xWidth - 1) / 2f;
+        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float z = 0f;
+        wall.transform.localPosition = new Vector3(x, y, z);
+        wall.transform.Rotate(Vector3.up, 270f);
+
+        gameObjects.Add(wall);
     }
 
     private void CreateRight()
     {
-        int length = footprint.zWidth - 2;
-        float y = trueBottomLeft.y + 0.5f;
-        if (doorSide == Side.Right)
-        {
-            // Randomly put the door along the side
-            int doorLoc = Mathf.FloorToInt(Random.Range(0, length));
+        int topDoorLoc = (doorSide == Side.Right) ? Mathf.FloorToInt(Random.Range(0, footprint.xWidth - 2)) : -1;
+        GameObject wall = Instantiate(wallPrefab);
+        wall.GetComponent<Wall>().SetLength(footprint.zWidth - 2);
+        wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
+        wall.GetComponent<Wall>().SetNumFloors(1);
+        wall.GetComponent<Wall>().SetHeightPerFloor(4);
+        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().CreateVoxels();
 
-            int zWidth; float xCenter, zCenter;
-            // Build the voxel below the door
-            if (doorLoc > 0)
-            {
-                GameObject lowerVoxel = Instantiate(cube);
-                zWidth = doorLoc;
-                xCenter = trueBottomLeft.x + footprint.xWidth - 0.5f;
-                zCenter = trueBottomLeft.z + 1f + zWidth / 2f;
-                lowerVoxel.transform.localScale = new Vector3(1, 1, zWidth);
-                lowerVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-                lowerVoxel.GetComponent<Renderer>().material = buildingMat1;
-                voxels.Add(lowerVoxel);
-            }
+        // Put the wall in the correct position
+        wall.transform.parent = transform;
+        float x = (footprint.xWidth - 1) / 2f;
+        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float z = 0f;
+        wall.transform.localPosition = new Vector3(x, y, z);
+        wall.transform.Rotate(Vector3.up, 90f);
 
-            // Build the voxel above the door
-            if(doorLoc < length - 1)
-            {
-                GameObject upperVoxel = Instantiate(cube);
-                zWidth = length - doorLoc - 1;
-                xCenter = trueBottomLeft.x + footprint.xWidth - 0.5f;
-                zCenter = trueBottomLeft.z + 1f + 1f + doorLoc + zWidth / 2f;
-                upperVoxel.transform.localScale = new Vector3(1, 1, zWidth);
-                upperVoxel.transform.position = new Vector3(xCenter, y, zCenter);
-                upperVoxel.GetComponent<Renderer>().material = buildingMat1;
-                voxels.Add(upperVoxel);
-            }
-            
-        }
-        // If this side does not have a door, it is one continuous wall
-        else
-        {
-            GameObject wall = Instantiate(cube);
-            int zWidth = length;
-            float xCenter = trueBottomLeft.x + footprint.xWidth - 0.5f;
-            float zCenter = trueBottomLeft.z + 1f + zWidth / 2f;
-            wall.transform.localScale = new Vector3(1, 1, zWidth);
-            wall.transform.position = new Vector3(xCenter, y, zCenter);
-            wall.GetComponent<Renderer>().material = buildingMat1;
-            voxels.Add(wall);
-        }
+        gameObjects.Add(wall);
     }
 }

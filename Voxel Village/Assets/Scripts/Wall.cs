@@ -17,6 +17,7 @@ public class Wall : MonoBehaviour
     private int numFloors;
     private int heightPerFloor;
     private int doorHeight;
+    private int totalHeight;
     private List<GameObject> voxels = new List<GameObject>();
 
     // Start is called before the first frame update
@@ -30,6 +31,22 @@ public class Wall : MonoBehaviour
     {
         
     }
+
+    public void EnableRendering()
+    {
+        for (int i = 0; i < voxels.Count; i++)
+        {
+            voxels[i].SetActive(true);
+        }
+    }
+    public void DisableRendering()
+    {
+        for (int i = 0; i < voxels.Count; i++)
+        {
+            voxels[i].SetActive(false);
+        }
+    }
+
 
     // Setters
     public void SetLength(int inputLength)
@@ -49,6 +66,7 @@ public class Wall : MonoBehaviour
     public void SetHeightPerFloor(int input)
     {
         heightPerFloor = input;
+        totalHeight = numFloors * heightPerFloor + numFloors; // A ground between each floor
     }
     public void SetDoorHeight(int input)
     {
@@ -63,36 +81,47 @@ public class Wall : MonoBehaviour
     }
     public void CreateVoxels()
     {
-        CreateFloor(0);
+        // Make the base floor
+        float currentCenterY = -totalHeight / 2f + 0.5f;
+        CreateFloor(currentCenterY);
+
+        // Do the first level
+        currentCenterY += 0.5f + heightPerFloor / 2f;
         if(doorLoc >= 0)
         {
-            CreateLevelWithDoor(1);
+            CreateLevelWithDoor(currentCenterY);
+        }
+        else
+        {
+            CreateLevelNoWindows(currentCenterY);
         }
     }
     
 
     // Helper functions for constructing voxels
-    private void CreateFloor(int height)
+    private void CreateFloor(float yCenter)
     {
         GameObject floor = Instantiate(cubePrefab);
         floor.transform.localScale = new Vector3(length, 1, 1);
+        floor.transform.parent = transform;
+        floor.transform.localPosition = new Vector3(0f, yCenter, 0f);
         floor.GetComponent<Renderer>().material = buildingMat;
         voxels.Add(floor);
     }
-    private void CreateLevelWithDoor(int height)
+    private void CreateLevelWithDoor(float yCenter)
     {
         int xWidth, yWidth;
-        float xCenter, yCenter;
+        float xCenter;
 
         // The left voxel
         if(doorLoc > 0)
         {
             xWidth = doorLoc;
-            xCenter = this.leftX + xWidth / 2f;
-            yCenter = height + heightPerFloor / 2f;
+            xCenter = -this.length/2f + xWidth / 2f;
             GameObject leftVoxel = Instantiate(cubePrefab);
             leftVoxel.transform.localScale = new Vector3(xWidth, heightPerFloor, 1);
-            leftVoxel.transform.position = new Vector3(xCenter, yCenter, 0);
+            leftVoxel.transform.parent = transform;
+            leftVoxel.transform.localPosition = new Vector3(xCenter, yCenter, 0f);
             leftVoxel.GetComponent<Renderer>().material = buildingMat;
             voxels.Add(leftVoxel);
         }
@@ -100,11 +129,11 @@ public class Wall : MonoBehaviour
         if(doorLoc <  length - 1)
         {
             xWidth = this.length - doorLoc - 1;
-            xCenter = this.rightX - xWidth / 2f;
-            yCenter = height + heightPerFloor / 2f;
+            xCenter = this.length/2f - xWidth / 2f;
             GameObject rightVoxel = Instantiate(cubePrefab);
             rightVoxel.transform.localScale = new Vector3(xWidth, heightPerFloor, 1);
-            rightVoxel.transform.position = new Vector3(xCenter, yCenter, 0);
+            rightVoxel.transform.parent = transform;
+            rightVoxel.transform.localPosition = new Vector3(xCenter, yCenter, 0);
             rightVoxel.GetComponent<Renderer>().material = buildingMat;
             voxels.Add(rightVoxel);
         }
@@ -112,22 +141,31 @@ public class Wall : MonoBehaviour
         if(doorHeight < heightPerFloor)
         {
             xWidth = 1;
-            xCenter = doorLoc + 0.5f;
+            xCenter = -this.length/2f + doorLoc + 0.5f;
             yWidth = this.heightPerFloor - this.doorHeight;
-            yCenter = this.doorHeight + yWidth / 2f;
             GameObject upVoxel = Instantiate(cubePrefab);
             upVoxel.transform.localScale = new Vector3(xWidth, yWidth, 1);
-            upVoxel.transform.position = new Vector3(xCenter, yCenter, 0);
+            upVoxel.transform.parent = transform;
+            upVoxel.transform.localPosition = new Vector3(xCenter, yCenter + heightPerFloor/2f - yWidth/2f, 0);
             upVoxel.GetComponent<Renderer>().material = buildingMat;
             voxels.Add(upVoxel);
         }
     }
-    private void CreateLevelNoWindows(int height)
+    private void CreateLevelNoWindows(float yCenter)
     {
         GameObject voxel = Instantiate(cubePrefab);
         voxel.transform.localScale = new Vector3(length, heightPerFloor, 1);
-        voxel.transform.position = new Vector3(length / 2f, height + heightPerFloor / 2f, 0);
+        voxel.transform.parent = transform;
+        voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
         voxel.GetComponent<Renderer>().material = buildingMat;
+        
         voxels.Add(voxel);
+    }
+
+
+    // Getter
+    public int GetTotalHeight()
+    {
+        return totalHeight;
     }
 }
