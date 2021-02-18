@@ -154,7 +154,7 @@ public class Building : MonoBehaviour
 
     private void CreateLeft()
     {
-        int topDoorLoc = (doorSide == Side.Left) ? Mathf.FloorToInt(Random.Range(0, footprint.xWidth - 2)) : -1;
+        int topDoorLoc = (doorSide == Side.Left) ? Mathf.FloorToInt(Random.Range(0, footprint.zWidth - 2)) : -1;
         GameObject wall = Instantiate(wallPrefab);
         wall.GetComponent<Wall>().SetLength(footprint.zWidth - 2);
         wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
@@ -176,7 +176,7 @@ public class Building : MonoBehaviour
 
     private void CreateRight()
     {
-        int topDoorLoc = (doorSide == Side.Right) ? Mathf.FloorToInt(Random.Range(0, footprint.xWidth - 2)) : -1;
+        int topDoorLoc = (doorSide == Side.Right) ? Mathf.FloorToInt(Random.Range(0, footprint.zWidth - 2)) : -1;
         GameObject wall = Instantiate(wallPrefab);
         wall.GetComponent<Wall>().SetLength(footprint.zWidth - 2);
         wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
