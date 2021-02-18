@@ -24,6 +24,7 @@ public class Building : MonoBehaviour
 {
     public GameObject cube;
     public GameObject wallPrefab;
+    public GameObject cornerPrefab;
     public Material buildingMat1;
 
 
@@ -33,6 +34,11 @@ public class Building : MonoBehaviour
     private Side doorSide;
     private List<GameObject> voxels = new List<GameObject>();
     private List<GameObject> gameObjects = new List<GameObject>();
+
+    private int heightPerFloor;
+    private int doorHeight;
+    private int numFloors;
+    private int totalHeight; // This is calculated based on height per floor and num floors
 
     // Start is called before the first frame update
     void Start()
@@ -60,6 +66,23 @@ public class Building : MonoBehaviour
         trueCenterBase = input;
         transform.position = trueCenterBase;
     }
+    public void SetHeightPerFloor(int input)
+    {
+        heightPerFloor = input;
+    }
+    public void SetDoorHeight(int input)
+    {
+        doorHeight = input;
+    }
+    public void SetNumFloors(int input)
+    {
+        numFloors = input;
+    }
+    public void CalculateTotalHeight()
+    {
+        totalHeight = heightPerFloor*numFloors + (numFloors + 1);
+    }
+
     public void EnableRendering()
     {
         for(int i = 0; i < gameObjects.Count; i++)
@@ -81,11 +104,14 @@ public class Building : MonoBehaviour
         Debug.Log("calling create voxels");
         doorSide = GetRandomSide();
 
-        // Create the 4 sides. I have chosen the top and bottom to contain the corners
+        // Create the 4 sides.
         this.CreateTop();
         this.CreateLeft();
         this.CreateBottom();
         this.CreateRight();
+
+        // Create the 4 corners
+        this.CreateCorners();
     }
 
     public static Side GetRandomSide()
@@ -114,15 +140,16 @@ public class Building : MonoBehaviour
         GameObject wall = Instantiate(wallPrefab);
         wall.GetComponent<Wall>().SetLength(footprint.xWidth - 2);
         wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
-        wall.GetComponent<Wall>().SetNumFloors(1);
-        wall.GetComponent<Wall>().SetHeightPerFloor(4);
-        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().SetNumFloors(this.numFloors);
+        wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
+        wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
+        wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
         wall.transform.parent = transform;
         float x = 0f;
-        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float y = totalHeight / 2f;
         float z = (footprint.zWidth - 1)/2f;
         wall.transform.localPosition = new Vector3(x, y, z);
         wall.transform.Rotate(Vector3.up, 180f);
@@ -136,15 +163,16 @@ public class Building : MonoBehaviour
         GameObject wall = Instantiate(wallPrefab);
         wall.GetComponent<Wall>().SetLength(footprint.xWidth - 2);
         wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
-        wall.GetComponent<Wall>().SetNumFloors(1);
-        wall.GetComponent<Wall>().SetHeightPerFloor(4);
-        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().SetNumFloors(this.numFloors);
+        wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
+        wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
+        wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
         wall.transform.parent = transform;
         float x = 0f;
-        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float y = totalHeight / 2f;
         float z = -(footprint.zWidth - 1) / 2f;
         wall.transform.localPosition = new Vector3(x, y, z);
         wall.transform.Rotate(Vector3.up, 0f);
@@ -158,15 +186,16 @@ public class Building : MonoBehaviour
         GameObject wall = Instantiate(wallPrefab);
         wall.GetComponent<Wall>().SetLength(footprint.zWidth - 2);
         wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
-        wall.GetComponent<Wall>().SetNumFloors(1);
-        wall.GetComponent<Wall>().SetHeightPerFloor(4);
-        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().SetNumFloors(this.numFloors);
+        wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
+        wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
+        wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
         wall.transform.parent = transform;
         float x = -(footprint.xWidth - 1) / 2f;
-        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float y = totalHeight / 2f;
         float z = 0f;
         wall.transform.localPosition = new Vector3(x, y, z);
         wall.transform.Rotate(Vector3.up, 270f);
@@ -180,19 +209,78 @@ public class Building : MonoBehaviour
         GameObject wall = Instantiate(wallPrefab);
         wall.GetComponent<Wall>().SetLength(footprint.zWidth - 2);
         wall.GetComponent<Wall>().SetDoorLoc(topDoorLoc);
-        wall.GetComponent<Wall>().SetNumFloors(1);
-        wall.GetComponent<Wall>().SetHeightPerFloor(4);
-        wall.GetComponent<Wall>().SetDoorHeight(2);
+        wall.GetComponent<Wall>().SetNumFloors(this.numFloors);
+        wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
+        wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
+        wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
         wall.transform.parent = transform;
         float x = (footprint.xWidth - 1) / 2f;
-        float y = wall.GetComponent<Wall>().GetTotalHeight() / 2f;
+        float y = totalHeight / 2f;
         float z = 0f;
         wall.transform.localPosition = new Vector3(x, y, z);
         wall.transform.Rotate(Vector3.up, 90f);
 
         gameObjects.Add(wall);
+    }
+
+    private void CreateCorners()
+    {
+        GameObject corner;
+        float x, y, z;
+
+        // Top left
+        corner = Instantiate(cornerPrefab);
+        corner.GetComponent<Corner>().SetHeight(totalHeight);
+        corner.GetComponent<Corner>().CreateVoxel();
+
+        corner.transform.parent = transform;
+        x = -(footprint.xWidth - 1) / 2f;
+        y = totalHeight / 2f;
+        z = (footprint.zWidth - 1) / 2f;
+        corner.transform.localPosition = new Vector3(x, y, z);
+
+        gameObjects.Add(corner);
+
+        // Top right
+        corner = Instantiate(cornerPrefab);
+        corner.GetComponent<Corner>().SetHeight(totalHeight);
+        corner.GetComponent<Corner>().CreateVoxel();
+
+        corner.transform.parent = transform;
+        x = (footprint.xWidth - 1) / 2f;
+        y = totalHeight / 2f;
+        z = (footprint.zWidth - 1) / 2f;
+        corner.transform.localPosition = new Vector3(x, y, z);
+
+        gameObjects.Add(corner);
+
+        // Bottom right
+        corner = Instantiate(cornerPrefab);
+        corner.GetComponent<Corner>().SetHeight(totalHeight);
+        corner.GetComponent<Corner>().CreateVoxel();
+
+        corner.transform.parent = transform;
+        x = (footprint.xWidth - 1) / 2f;
+        y = totalHeight / 2f;
+        z = -(footprint.zWidth - 1) / 2f;
+        corner.transform.localPosition = new Vector3(x, y, z);
+
+        gameObjects.Add(corner);
+
+        // Bottom left
+        corner = Instantiate(cornerPrefab);
+        corner.GetComponent<Corner>().SetHeight(totalHeight);
+        corner.GetComponent<Corner>().CreateVoxel();
+
+        corner.transform.parent = transform;
+        x = -(footprint.xWidth - 1) / 2f;
+        y = totalHeight / 2f;
+        z = -(footprint.zWidth - 1) / 2f;
+        corner.transform.localPosition = new Vector3(x, y, z);
+
+        gameObjects.Add(corner);
     }
 }

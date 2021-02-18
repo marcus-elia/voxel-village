@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1981892199}
-  renderRadius: 0
+  renderRadius: 2
   ChunkPrefab: {fileID: 7396188537076512605, guid: 9b6fe2a3b75bf3644969f7e5b8093a07,
     type: 3}
 --- !u!4 &493048903

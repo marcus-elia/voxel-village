@@ -174,8 +174,11 @@ public class Chunk : MonoBehaviour
     {
         GameObject building = Instantiate(buildingPrefab);
         building.GetComponent<Building>().SetFootprint(info);
-        //building.GetComponent<Building>().SetTrueBottomLeft(bottomLeft);
         building.GetComponent<Building>().SetTrueCenterBase(centerBase);
+        building.GetComponent<Building>().SetHeightPerFloor(4);
+        building.GetComponent<Building>().SetNumFloors(1);
+        building.GetComponent<Building>().SetDoorHeight(2);
+        building.GetComponent<Building>().CalculateTotalHeight();
         building.transform.position = centerBase;
         Debug.Log("new building centered at");
         Debug.Log(centerBase);

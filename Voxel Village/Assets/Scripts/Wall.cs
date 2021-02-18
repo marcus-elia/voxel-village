@@ -66,7 +66,11 @@ public class Wall : MonoBehaviour
     public void SetHeightPerFloor(int input)
     {
         heightPerFloor = input;
-        totalHeight = numFloors * heightPerFloor + numFloors; // A ground between each floor
+        //totalHeight = numFloors * heightPerFloor + numFloors; // A ground between each floor
+    }
+    public void SetTotalHeight(int input)
+    {
+        totalHeight = input;
     }
     public void SetDoorHeight(int input)
     {
