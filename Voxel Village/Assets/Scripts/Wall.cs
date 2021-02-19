@@ -97,7 +97,7 @@ public class Wall : MonoBehaviour
         }
         else
         {
-            CreateLevelNoWindows(currentCenterY);
+            CreateLevelFullWindows(currentCenterY);
         }
     }
     
@@ -163,6 +163,17 @@ public class Wall : MonoBehaviour
         voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
         voxel.GetComponent<Renderer>().material = buildingMat;
         
+        voxels.Add(voxel);
+    }
+
+    private void CreateLevelFullWindows(float yCenter)
+    {
+        GameObject voxel = Instantiate(cubePrefab);
+        voxel.transform.localScale = new Vector3(length, heightPerFloor, 1);
+        voxel.transform.parent = transform;
+        voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
+        voxel.GetComponent<Renderer>().material = glass;
+
         voxels.Add(voxel);
     }
 
