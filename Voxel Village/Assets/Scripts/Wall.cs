@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum WindowPlan  {Alternating, Centered, Full, NoWindows};
+public enum WindowPlan  {Complex, Full, NoWindows};
 
 public class Wall : MonoBehaviour
 {
@@ -97,7 +97,7 @@ public class Wall : MonoBehaviour
         }
         else
         {
-            CreateLevelAlternatingWindows(currentCenterY);
+            CreateLevelComplexWindows(currentCenterY);
         }
     }
     
@@ -177,12 +177,58 @@ public class Wall : MonoBehaviour
         voxels.Add(voxel);
     }
 
-    private void CreateLevelAlternatingWindows(float yCenter)
+    private void CreateLevelComplexWindows(float yCenter)
     {
+        // Put a window in the center
         if(length % 2 == 0)
         {
-            CreateLevelNoWindows(yCenter);
+            int windowWidth;
+
+            // If the wall is wide enough, make borders
+            if(length > 2)
+            {
+                int borderWidth;
+                if(length % 4 == 0)
+                {
+                    borderWidth = length / 4;
+                }
+                else
+                {
+                    borderWidth = (length - 2) / 4;
+                }
+
+                // Left border 
+                GameObject leftVoxel = Instantiate(cubePrefab);
+                leftVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
+                leftVoxel.transform.parent = transform;
+                leftVoxel.transform.localPosition = new Vector3(-length/2 + borderWidth/2f, yCenter, 0f);
+                leftVoxel.GetComponent<Renderer>().material = buildingMat;
+                voxels.Add(leftVoxel);
+
+                // Right border
+                GameObject rightVoxel = Instantiate(cubePrefab);
+                rightVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
+                rightVoxel.transform.parent = transform;
+                rightVoxel.transform.localPosition = new Vector3(length / 2 - borderWidth / 2f, yCenter, 0f);
+                rightVoxel.GetComponent<Renderer>().material = buildingMat;
+                voxels.Add(rightVoxel);
+
+                windowWidth = length - 2 * borderWidth;
+            }
+            else
+            {
+                windowWidth = length;
+            }
+
+            // Make the window
+            GameObject voxel = Instantiate(cubePrefab);
+            voxel.transform.localScale = new Vector3(windowWidth, heightPerFloor, 1);
+            voxel.transform.parent = transform;
+            voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
+            voxel.GetComponent<Renderer>().material = glass;
+            voxels.Add(voxel);
         }
+        // Put alternating windows
         else
         {
             for(int i = -(length/2); i < length/2 + 1; i++)
