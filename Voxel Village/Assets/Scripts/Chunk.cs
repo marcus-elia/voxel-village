@@ -17,9 +17,9 @@ public class Chunk : MonoBehaviour
     private static int maxBuildingSize = 9;
 
     // Probability of a building having a window plan type
-    private static float noWindowsProb = 0.2f;
-    private static float fullWindowsProb = 0.4f;
-    private static float alternatingWindowsProb = 0.7f;
+    private static float noWindowsProb = 0.15f;
+    private static float fullWindowsProb = 0.3f;
+    private static float alternatingWindowsProb = 0.65f;
     private static float centeredWindowsProb = 1.0f;
 
     public GameObject groundPrefab;
@@ -181,9 +181,9 @@ public class Chunk : MonoBehaviour
         GameObject building = Instantiate(buildingPrefab);
         building.GetComponent<Building>().SetFootprint(info);
         building.GetComponent<Building>().SetTrueCenterBase(centerBase);
-        building.GetComponent<Building>().SetHeightPerFloor(4);
-        building.GetComponent<Building>().SetNumFloors(1);
-        building.GetComponent<Building>().SetDoorHeight(2);
+        building.GetComponent<Building>().SetHeightPerFloor(ChooseRandomHeightPerFloor());
+        building.GetComponent<Building>().SetNumFloors(ChooseRandomNumFloors());
+        building.GetComponent<Building>().SetDoorHeight(3);
         building.GetComponent<Building>().CalculateTotalHeight();
         building.GetComponent<Building>().SetWindowPlan(ChooseRandomWindowPlan());
         building.transform.position = centerBase;
@@ -211,6 +211,16 @@ public class Chunk : MonoBehaviour
         {
             return WindowPlan.Centered;
         }
+    }
+
+    private int ChooseRandomHeightPerFloor()
+    {
+        return Random.Range(4, 7);
+    }
+
+    private int ChooseRandomNumFloors()
+    {
+        return Random.Range(1, 6);
     }
 
 }

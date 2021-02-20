@@ -104,6 +104,17 @@ public class Wall : MonoBehaviour
         {
             CreateLevel(currentCenterY);
         }
+        currentCenterY += 0.5f + heightPerFloor / 2f;
+        CreateFloor(currentCenterY);
+
+        // Do the rest of the levels
+        for (int i = 1; i < numFloors; i++)
+        {
+            currentCenterY += 0.5f + heightPerFloor / 2f;
+            CreateLevel(currentCenterY);
+            currentCenterY += 0.5f + heightPerFloor / 2f;
+            CreateFloor(currentCenterY);
+        }
     }
     
 
