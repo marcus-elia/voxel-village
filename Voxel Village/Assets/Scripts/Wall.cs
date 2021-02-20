@@ -183,8 +183,9 @@ public class Wall : MonoBehaviour
         if(length % 2 == 0)
         {
             int windowWidth;
+            int windowHeight;
 
-            // If the wall is wide enough, make borders
+            // If the wall is wide enough, make left/right borders
             if(length > 2)
             {
                 int borderWidth;
@@ -220,9 +221,45 @@ public class Wall : MonoBehaviour
                 windowWidth = length;
             }
 
+            // If the wall is tall enough, make bottom/top borders
+            if(heightPerFloor > 2)
+            {
+                int borderHeight;
+                if(heightPerFloor % 4 == 0)
+                {
+                    borderHeight = heightPerFloor / 4;
+                }
+                else
+                {
+                    borderHeight = (heightPerFloor - 2) / 4;
+                }
+
+                // Top border
+                GameObject topVoxel = Instantiate(cubePrefab);
+                topVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
+                topVoxel.transform.parent = transform;
+                topVoxel.transform.localPosition = new Vector3(0f, yCenter + heightPerFloor / 2f - borderHeight / 2f, 0f);
+                topVoxel.GetComponent<Renderer>().material = buildingMat;
+                voxels.Add(topVoxel);
+
+                // Bottom border
+                GameObject bottomVoxel = Instantiate(cubePrefab);
+                bottomVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
+                bottomVoxel.transform.parent = transform;
+                bottomVoxel.transform.localPosition = new Vector3(0f, yCenter - heightPerFloor / 2f + borderHeight / 2f, 0f);
+                bottomVoxel.GetComponent<Renderer>().material = buildingMat;
+                voxels.Add(bottomVoxel);
+
+                windowHeight = heightPerFloor - borderHeight * 2;
+            }
+            else
+            {
+                windowHeight = heightPerFloor;
+            }
+
             // Make the window
             GameObject voxel = Instantiate(cubePrefab);
-            voxel.transform.localScale = new Vector3(windowWidth, heightPerFloor, 1);
+            voxel.transform.localScale = new Vector3(windowWidth, windowHeight, 1);
             voxel.transform.parent = transform;
             voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
             voxel.GetComponent<Renderer>().material = glass;
@@ -231,13 +268,14 @@ public class Wall : MonoBehaviour
         // Put alternating windows
         else
         {
+            bool isWindow = true;
             for(int i = -(length/2); i < length/2 + 1; i++)
             {
                 GameObject voxel = Instantiate(cubePrefab);
                 voxel.transform.localScale = new Vector3(1, heightPerFloor, 1);
                 voxel.transform.parent = transform;
                 voxel.transform.localPosition = new Vector3(i, yCenter, 0f);
-                if(i % 2 == (length/2) % 2)
+                if(isWindow)
                 {
                     voxel.GetComponent<Renderer>().material = glass;
                 }
@@ -247,6 +285,9 @@ public class Wall : MonoBehaviour
                 }
 
                 voxels.Add(voxel);
+
+                // keep track of the alternatingness
+                isWindow = !isWindow;
             }
         }
     }
