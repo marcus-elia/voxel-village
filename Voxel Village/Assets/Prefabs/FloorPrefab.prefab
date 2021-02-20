@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4042997739536456579
+--- !u!1 &1371111400737838145
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 477909730134134917}
-  - component: {fileID: 2509427351042933379}
+  - component: {fileID: 3076311868490115630}
+  - component: {fileID: 7750060582445122128}
   m_Layer: 0
-  m_Name: Building Prefab
+  m_Name: FloorPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &477909730134134917
+--- !u!4 &3076311868490115630
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4042997739536456579}
+  m_GameObject: {fileID: 1371111400737838145}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,22 +31,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2509427351042933379
+--- !u!114 &7750060582445122128
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4042997739536456579}
+  m_GameObject: {fileID: 1371111400737838145}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 309a0b0b9b8729549bc1305cfe936ecc, type: 3}
+  m_Script: {fileID: 11500000, guid: 795d3ad489a246641bed79309ae15ed6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cube: {fileID: 1834473214506367465, guid: 2f4ca76442448374ead85b5bdbc46f5b, type: 3}
-  wallPrefab: {fileID: 6155695326505348421, guid: 5cc2a4b99922fcf45a19c6c4c7b273cd,
+  cubePrefab: {fileID: 1834473214506367465, guid: 2f4ca76442448374ead85b5bdbc46f5b,
     type: 3}
-  cornerPrefab: {fileID: 7316267422186883080, guid: 43bcc513f280cca4e90daa8cb0c55902,
-    type: 3}
-  floorPrefab: {fileID: 1371111400737838145, guid: 3b4fea88f6def424d96c803a360a5d47,
-    type: 3}
+  floorMat: {fileID: 2100000, guid: e02d98af575ebaf4184133be40e10014, type: 2}
+  roofMat: {fileID: 2100000, guid: e7c1e57e2684a3e47bb4547c24d764dc, type: 2}

@@ -25,7 +25,7 @@ public class Building : MonoBehaviour
     public GameObject cube;
     public GameObject wallPrefab;
     public GameObject cornerPrefab;
-    public Material buildingMat1;
+    public GameObject floorPrefab;
 
 
     private BuildingInfo footprint;
@@ -116,6 +116,9 @@ public class Building : MonoBehaviour
 
         // Create the 4 corners
         this.CreateCorners();
+
+        // Make a floor between each level
+        this.CreateFloors();
     }
 
     public static Side GetRandomSide()
@@ -286,5 +289,44 @@ public class Building : MonoBehaviour
         corner.transform.localPosition = new Vector3(x, y, z);
 
         gameObjects.Add(corner);
+    }
+
+    private void CreateFloors()
+    {
+        float yCenter = 0.5f;
+        GameObject floor;
+
+        floor = Instantiate(floorPrefab);
+        floor.GetComponent<Floor>().SetXWidth(footprint.xWidth - 2);
+        floor.GetComponent<Floor>().SetZWidth(footprint.zWidth - 2);
+        floor.GetComponent<Floor>().CreateVoxel();
+        floor.transform.parent = transform;
+        floor.transform.localPosition = new Vector3(0, yCenter, 0);
+
+        gameObjects.Add(floor);
+
+        for(int i = 0; i < numFloors; i++)
+        {
+            yCenter += heightPerFloor + 1;
+
+            floor = Instantiate(floorPrefab);
+            floor.GetComponent<Floor>().SetXWidth(footprint.xWidth - 2);
+            floor.GetComponent<Floor>().SetZWidth(footprint.zWidth - 2);
+            floor.GetComponent<Floor>().CreateVoxel();
+            floor.transform.parent = transform;
+            floor.transform.localPosition = new Vector3(0, yCenter, 0);
+
+            gameObjects.Add(floor);
+        }
+
+        // Add the roof
+        GameObject roof = Instantiate(floorPrefab);
+        roof.GetComponent<Floor>().SetXWidth(footprint.xWidth - 2);
+        roof.GetComponent<Floor>().SetZWidth(footprint.zWidth - 2);
+        roof.GetComponent<Floor>().CreateVoxel(true);
+        roof.transform.parent = transform;
+        roof.transform.localPosition = new Vector3(0, yCenter + 1f, 0);
+
+        gameObjects.Add(roof);
     }
 }
