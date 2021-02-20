@@ -39,6 +39,7 @@ public class Building : MonoBehaviour
     private int doorHeight;
     private int numFloors;
     private int totalHeight; // This is calculated based on height per floor and num floors
+    private WindowPlan windowPlan;
 
     // Start is called before the first frame update
     void Start()
@@ -82,6 +83,10 @@ public class Building : MonoBehaviour
     {
         totalHeight = heightPerFloor*numFloors + (numFloors + 1);
     }
+    public void SetWindowPlan(WindowPlan input)
+    {
+        windowPlan = input;
+    }
 
     public void EnableRendering()
     {
@@ -101,7 +106,6 @@ public class Building : MonoBehaviour
     // Functions to create the building
     public void CreateVoxels()
     {
-        Debug.Log("calling create voxels");
         doorSide = GetRandomSide();
 
         // Create the 4 sides.
@@ -120,16 +124,12 @@ public class Building : MonoBehaviour
         switch(rand)
         {
             case 0:
-                Debug.Log("top");
                 return Side.Top; break;
             case 1:
-                Debug.Log("left");
                 return Side.Left; break;
             case 2:
-                Debug.Log("bottom");
                 return Side.Bottom; break;
             default:
-                Debug.Log("right");
                 return Side.Right; break;
         }
     }
@@ -144,6 +144,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
+        wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
@@ -167,6 +168,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
+        wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
@@ -190,6 +192,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
+        wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
@@ -213,6 +216,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetHeightPerFloor(this.heightPerFloor);
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
+        wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position

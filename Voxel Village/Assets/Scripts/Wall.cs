@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum WindowPlan  {Complex, Full, NoWindows};
+public enum WindowPlan  {Centered, Alternating, Full, NoWindows};
 
 public class Wall : MonoBehaviour
 {
@@ -18,6 +18,7 @@ public class Wall : MonoBehaviour
     private int heightPerFloor;
     private int doorHeight;
     private int totalHeight;
+    private WindowPlan windowPlan;
     private List<GameObject> voxels = new List<GameObject>();
 
     // Start is called before the first frame update
@@ -83,6 +84,10 @@ public class Wall : MonoBehaviour
             doorHeight = input;
         }
     }
+    public void SetWindowPlan(WindowPlan input)
+    {
+        windowPlan = input;
+    }
     public void CreateVoxels()
     {
         // Make the base floor
@@ -97,7 +102,7 @@ public class Wall : MonoBehaviour
         }
         else
         {
-            CreateLevelComplexWindows(currentCenterY);
+            CreateLevel(currentCenterY);
         }
     }
     
@@ -155,6 +160,25 @@ public class Wall : MonoBehaviour
             voxels.Add(upVoxel);
         }
     }
+    private void CreateLevel(float yCenter)
+    {
+        if(this.windowPlan == WindowPlan.NoWindows)
+        {
+            CreateLevelNoWindows(yCenter);
+        }
+        else if(this.windowPlan == WindowPlan.Alternating)
+        {
+            CreateLevelAlternatingWindows(yCenter);
+        }
+        else if(this.windowPlan == WindowPlan.Centered)
+        {
+            CreateLevelCenteredWindows(yCenter);
+        }
+        else if(this.windowPlan == WindowPlan.Full)
+        {
+            CreateLevelFullWindows(yCenter);
+        }
+    }
     private void CreateLevelNoWindows(float yCenter)
     {
         GameObject voxel = Instantiate(cubePrefab);
@@ -177,95 +201,101 @@ public class Wall : MonoBehaviour
         voxels.Add(voxel);
     }
 
-    private void CreateLevelComplexWindows(float yCenter)
+
+    private void CreateLevelCenteredWindows(float yCenter)
     {
-        // Put a window in the center
+        int windowHeight;
+        int windowWidth;
+
+        // If the wall is wide enough, make left/right borders
+        if (length > 2)
+        {
+            int borderWidth;
+            if(length % 4 < 2)
+            {
+                borderWidth = length / 4;
+            }
+            else 
+            {
+                borderWidth = length / 4 + 1;
+            }
+
+            // Left border 
+            GameObject leftVoxel = Instantiate(cubePrefab);
+            leftVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
+            leftVoxel.transform.parent = transform;
+            leftVoxel.transform.localPosition = new Vector3(-length / 2f + borderWidth / 2f, yCenter, 0f);
+            leftVoxel.GetComponent<Renderer>().material = buildingMat;
+            voxels.Add(leftVoxel);
+
+            // Right border
+            GameObject rightVoxel = Instantiate(cubePrefab);
+            rightVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
+            rightVoxel.transform.parent = transform;
+            rightVoxel.transform.localPosition = new Vector3(length / 2f - borderWidth / 2f, yCenter, 0f);
+            rightVoxel.GetComponent<Renderer>().material = buildingMat;
+            voxels.Add(rightVoxel);
+
+            windowWidth = length - 2 * borderWidth;
+        }
+        else
+        {
+            windowWidth = length;
+        }
+
+        // If the wall is tall enough, make bottom/top borders
+        if (heightPerFloor > 2)
+        {
+            int borderHeight;
+            if (heightPerFloor % 4 < 2)
+            {
+                borderHeight = heightPerFloor / 4;
+            }
+            else
+            {
+                borderHeight = heightPerFloor / 4 + 1;
+            }
+
+            // Top border
+            GameObject topVoxel = Instantiate(cubePrefab);
+            topVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
+            topVoxel.transform.parent = transform;
+            topVoxel.transform.localPosition = new Vector3(0f, yCenter + heightPerFloor / 2f - borderHeight / 2f, 0f);
+            topVoxel.GetComponent<Renderer>().material = buildingMat;
+            voxels.Add(topVoxel);
+
+            // Bottom border
+            GameObject bottomVoxel = Instantiate(cubePrefab);
+            bottomVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
+            bottomVoxel.transform.parent = transform;
+            bottomVoxel.transform.localPosition = new Vector3(0f, yCenter - heightPerFloor / 2f + borderHeight / 2f, 0f);
+            bottomVoxel.GetComponent<Renderer>().material = buildingMat;
+            voxels.Add(bottomVoxel);
+
+            windowHeight = heightPerFloor - borderHeight * 2;
+        }
+        else
+        {
+            windowHeight = heightPerFloor;
+        }
+
+        // Make the window
+        GameObject voxel = Instantiate(cubePrefab);
+        voxel.transform.localScale = new Vector3(windowWidth, windowHeight, 1);
+        voxel.transform.parent = transform;
+        voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
+        voxel.GetComponent<Renderer>().material = glass;
+        voxels.Add(voxel);
+    }
+
+    private void CreateLevelAlternatingWindows(float yCenter)
+    {
+        // If it's even length, don't do alternating.
         if(length % 2 == 0)
         {
-            int windowWidth;
-            int windowHeight;
-
-            // If the wall is wide enough, make left/right borders
-            if(length > 2)
-            {
-                int borderWidth;
-                if(length % 4 == 0)
-                {
-                    borderWidth = length / 4;
-                }
-                else
-                {
-                    borderWidth = (length - 2) / 4;
-                }
-
-                // Left border 
-                GameObject leftVoxel = Instantiate(cubePrefab);
-                leftVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
-                leftVoxel.transform.parent = transform;
-                leftVoxel.transform.localPosition = new Vector3(-length/2 + borderWidth/2f, yCenter, 0f);
-                leftVoxel.GetComponent<Renderer>().material = buildingMat;
-                voxels.Add(leftVoxel);
-
-                // Right border
-                GameObject rightVoxel = Instantiate(cubePrefab);
-                rightVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
-                rightVoxel.transform.parent = transform;
-                rightVoxel.transform.localPosition = new Vector3(length / 2 - borderWidth / 2f, yCenter, 0f);
-                rightVoxel.GetComponent<Renderer>().material = buildingMat;
-                voxels.Add(rightVoxel);
-
-                windowWidth = length - 2 * borderWidth;
-            }
-            else
-            {
-                windowWidth = length;
-            }
-
-            // If the wall is tall enough, make bottom/top borders
-            if(heightPerFloor > 2)
-            {
-                int borderHeight;
-                if(heightPerFloor % 4 == 0)
-                {
-                    borderHeight = heightPerFloor / 4;
-                }
-                else
-                {
-                    borderHeight = (heightPerFloor - 2) / 4;
-                }
-
-                // Top border
-                GameObject topVoxel = Instantiate(cubePrefab);
-                topVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
-                topVoxel.transform.parent = transform;
-                topVoxel.transform.localPosition = new Vector3(0f, yCenter + heightPerFloor / 2f - borderHeight / 2f, 0f);
-                topVoxel.GetComponent<Renderer>().material = buildingMat;
-                voxels.Add(topVoxel);
-
-                // Bottom border
-                GameObject bottomVoxel = Instantiate(cubePrefab);
-                bottomVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
-                bottomVoxel.transform.parent = transform;
-                bottomVoxel.transform.localPosition = new Vector3(0f, yCenter - heightPerFloor / 2f + borderHeight / 2f, 0f);
-                bottomVoxel.GetComponent<Renderer>().material = buildingMat;
-                voxels.Add(bottomVoxel);
-
-                windowHeight = heightPerFloor - borderHeight * 2;
-            }
-            else
-            {
-                windowHeight = heightPerFloor;
-            }
-
-            // Make the window
-            GameObject voxel = Instantiate(cubePrefab);
-            voxel.transform.localScale = new Vector3(windowWidth, windowHeight, 1);
-            voxel.transform.parent = transform;
-            voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
-            voxel.GetComponent<Renderer>().material = glass;
-            voxels.Add(voxel);
+            CreateLevelNoWindows(yCenter);
         }
-        // Put alternating windows
+        // If length is odd, then we are good.
         else
         {
             bool isWindow = true;
