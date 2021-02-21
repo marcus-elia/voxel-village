@@ -51,3 +51,11 @@ MonoBehaviour:
     type: 3}
   lowMaterial: {fileID: 2100000, guid: 6196de60bff73104a93344d894581dd5, type: 2}
   highMaterial: {fileID: 2100000, guid: 336186039d8e2164a8c6028aebe76030, type: 2}
+  redRC: {fileID: 2800000, guid: 1b3b8d05b6fbe0e479ba0eec4a52016a, type: 3}
+  blueRC: {fileID: 2800000, guid: 78a6dc9fe34a6c44390cd17e3223de6c, type: 3}
+  greenRC: {fileID: 2800000, guid: 09dd47dbdafc9f7478fbf5d524da2725, type: 3}
+  whiteRC: {fileID: 2800000, guid: fe181d65a0b11454397dd65829c6979c, type: 3}
+  yellowRC: {fileID: 2800000, guid: 1f3def2e3eb0c194ebb861e626b034a0, type: 3}
+  orangeRC: {fileID: 2800000, guid: 2992cb3f43c6c434fa28bf83f610c916, type: 3}
+  cyanRC: {fileID: 2800000, guid: 27200a9b1bdb34044bf078e413936af9, type: 3}
+  magentaRC: {fileID: 2800000, guid: e1979d708ca51504e81ec47940d33a0d, type: 3}

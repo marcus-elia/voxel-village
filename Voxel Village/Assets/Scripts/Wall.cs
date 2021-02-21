@@ -10,6 +10,8 @@ public class Wall : MonoBehaviour
 
     public Material buildingMat;
     public Material glass;
+    public Texture redRC;
+    private Texture texture;
 
     private int doorLoc;
     private int length;
@@ -84,6 +86,10 @@ public class Wall : MonoBehaviour
             doorHeight = input;
         }
     }
+    public void SetTexture(Texture input)
+    {
+        texture = input;
+    }
     public void SetWindowPlan(WindowPlan input)
     {
         windowPlan = input;
@@ -125,7 +131,8 @@ public class Wall : MonoBehaviour
         floor.transform.localScale = new Vector3(length, 1, 1);
         floor.transform.parent = transform;
         floor.transform.localPosition = new Vector3(0f, yCenter, 0f);
-        floor.GetComponent<Renderer>().material = buildingMat;
+        floor.GetComponent<Renderer>().material.mainTexture = this.texture;
+        floor.GetComponent<Renderer>().material.mainTextureScale = new Vector2(length, 1);
         voxels.Add(floor);
     }
     private void CreateLevelWithDoor(float yCenter)
@@ -142,7 +149,8 @@ public class Wall : MonoBehaviour
             leftVoxel.transform.localScale = new Vector3(xWidth, heightPerFloor, 1);
             leftVoxel.transform.parent = transform;
             leftVoxel.transform.localPosition = new Vector3(xCenter, yCenter, 0f);
-            leftVoxel.GetComponent<Renderer>().material = buildingMat;
+            leftVoxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+            leftVoxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(xWidth, heightPerFloor);
             voxels.Add(leftVoxel);
         }
         // The right voxel
@@ -154,7 +162,8 @@ public class Wall : MonoBehaviour
             rightVoxel.transform.localScale = new Vector3(xWidth, heightPerFloor, 1);
             rightVoxel.transform.parent = transform;
             rightVoxel.transform.localPosition = new Vector3(xCenter, yCenter, 0);
-            rightVoxel.GetComponent<Renderer>().material = buildingMat;
+            rightVoxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+            rightVoxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(xWidth, heightPerFloor);
             voxels.Add(rightVoxel);
         }
         // Above the door
@@ -167,7 +176,8 @@ public class Wall : MonoBehaviour
             upVoxel.transform.localScale = new Vector3(xWidth, yWidth, 1);
             upVoxel.transform.parent = transform;
             upVoxel.transform.localPosition = new Vector3(xCenter, yCenter + heightPerFloor/2f - yWidth/2f, 0);
-            upVoxel.GetComponent<Renderer>().material = buildingMat;
+            upVoxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+            upVoxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(xWidth, yWidth);
             voxels.Add(upVoxel);
         }
     }
@@ -196,8 +206,9 @@ public class Wall : MonoBehaviour
         voxel.transform.localScale = new Vector3(length, heightPerFloor, 1);
         voxel.transform.parent = transform;
         voxel.transform.localPosition = new Vector3(0f, yCenter, 0f);
-        voxel.GetComponent<Renderer>().material = buildingMat;
-        
+        voxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+        voxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(length, heightPerFloor);
+
         voxels.Add(voxel);
     }
 
@@ -236,7 +247,8 @@ public class Wall : MonoBehaviour
             leftVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
             leftVoxel.transform.parent = transform;
             leftVoxel.transform.localPosition = new Vector3(-length / 2f + borderWidth / 2f, yCenter, 0f);
-            leftVoxel.GetComponent<Renderer>().material = buildingMat;
+            leftVoxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+            leftVoxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(borderWidth, heightPerFloor);
             voxels.Add(leftVoxel);
 
             // Right border
@@ -244,7 +256,8 @@ public class Wall : MonoBehaviour
             rightVoxel.transform.localScale = new Vector3(borderWidth, heightPerFloor, 1);
             rightVoxel.transform.parent = transform;
             rightVoxel.transform.localPosition = new Vector3(length / 2f - borderWidth / 2f, yCenter, 0f);
-            rightVoxel.GetComponent<Renderer>().material = buildingMat;
+            rightVoxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+            rightVoxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(borderWidth, heightPerFloor);
             voxels.Add(rightVoxel);
 
             windowWidth = length - 2 * borderWidth;
@@ -272,7 +285,8 @@ public class Wall : MonoBehaviour
             topVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
             topVoxel.transform.parent = transform;
             topVoxel.transform.localPosition = new Vector3(0f, yCenter + heightPerFloor / 2f - borderHeight / 2f, 0f);
-            topVoxel.GetComponent<Renderer>().material = buildingMat;
+            topVoxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+            topVoxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(windowWidth, borderHeight);
             voxels.Add(topVoxel);
 
             // Bottom border
@@ -280,7 +294,8 @@ public class Wall : MonoBehaviour
             bottomVoxel.transform.localScale = new Vector3(windowWidth, borderHeight, 1);
             bottomVoxel.transform.parent = transform;
             bottomVoxel.transform.localPosition = new Vector3(0f, yCenter - heightPerFloor / 2f + borderHeight / 2f, 0f);
-            bottomVoxel.GetComponent<Renderer>().material = buildingMat;
+            bottomVoxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+            bottomVoxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(windowWidth, borderHeight);
             voxels.Add(bottomVoxel);
 
             windowHeight = heightPerFloor - borderHeight * 2;
@@ -322,7 +337,8 @@ public class Wall : MonoBehaviour
                 }
                 else
                 {
-                    voxel.GetComponent<Renderer>().material = buildingMat;
+                    voxel.GetComponent<Renderer>().material.mainTexture = this.texture;
+                    voxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(1, heightPerFloor);
                 }
 
                 voxels.Add(voxel);

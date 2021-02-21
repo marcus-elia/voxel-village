@@ -47,3 +47,4 @@ MonoBehaviour:
     type: 3}
   buildingMat: {fileID: 2100000, guid: e7c1e57e2684a3e47bb4547c24d764dc, type: 2}
   glass: {fileID: 2100000, guid: 334fbc9ea7d103043992941550e532b7, type: 2}
+  redRC: {fileID: 2800000, guid: 1b3b8d05b6fbe0e479ba0eec4a52016a, type: 3}

@@ -27,6 +27,7 @@ public class Building : MonoBehaviour
     public GameObject cornerPrefab;
     public GameObject floorPrefab;
 
+    private Texture texture;
 
     private BuildingInfo footprint;
     private Vector3 trueBottomLeft;
@@ -86,6 +87,10 @@ public class Building : MonoBehaviour
     public void SetWindowPlan(WindowPlan input)
     {
         windowPlan = input;
+    }
+    public void SetTexture(Texture input)
+    {
+        texture = input;
     }
 
     public void EnableRendering()
@@ -148,6 +153,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
+        wall.GetComponent<Wall>().SetTexture(this.texture);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
@@ -172,6 +178,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
+        wall.GetComponent<Wall>().SetTexture(this.texture);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
@@ -196,6 +203,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
+        wall.GetComponent<Wall>().SetTexture(this.texture);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position
@@ -220,6 +228,7 @@ public class Building : MonoBehaviour
         wall.GetComponent<Wall>().SetDoorHeight(this.doorHeight);
         wall.GetComponent<Wall>().SetTotalHeight(this.totalHeight);
         wall.GetComponent<Wall>().SetWindowPlan(this.windowPlan);
+        wall.GetComponent<Wall>().SetTexture(this.texture);
         wall.GetComponent<Wall>().CreateVoxels();
 
         // Put the wall in the correct position

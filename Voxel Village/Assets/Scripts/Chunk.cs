@@ -29,6 +29,16 @@ public class Chunk : MonoBehaviour
     public Material lowMaterial;
     public Material highMaterial;
 
+    public Texture redRC;
+    public Texture blueRC;
+    public Texture greenRC;
+    public Texture whiteRC;
+    public Texture yellowRC;
+    public Texture orangeRC;
+    public Texture cyanRC;
+    public Texture magentaRC;
+    public static int numTextures = 8;
+
     private GameObject ground;
 
     private Transform playerTransform;
@@ -186,6 +196,7 @@ public class Chunk : MonoBehaviour
         building.GetComponent<Building>().SetDoorHeight(3);
         building.GetComponent<Building>().CalculateTotalHeight();
         building.GetComponent<Building>().SetWindowPlan(ChooseRandomWindowPlan());
+        building.GetComponent<Building>().SetTexture(ChooseRandomTexture());
         building.transform.position = centerBase;
         building.GetComponent<Building>().CreateVoxels();
         footprints.Add(info);
@@ -221,6 +232,43 @@ public class Chunk : MonoBehaviour
     private int ChooseRandomNumFloors()
     {
         return Random.Range(1, 6);
+    }
+
+    private Texture ChooseRandomTexture()
+    {
+        float rand = Random.Range(0, 1000) / 1000f;
+        if(rand < 1f / numTextures)
+        {
+            return redRC;
+        }
+        else if(rand < 2f / numTextures)
+        {
+            return blueRC;
+        }
+        else if(rand < 3f / numTextures)
+        {
+            return greenRC;
+        }
+        else if(rand < 4f / numTextures)
+        {
+            return yellowRC;
+        }
+        else if(rand < 5f / numTextures)
+        {
+            return whiteRC;
+        }
+        else if(rand < 6f / numTextures)
+        {
+            return orangeRC;
+        }
+        else if(rand < 7f / numTextures)
+        {
+            return cyanRC;
+        }
+        else
+        {
+            return magentaRC;
+        }
     }
 
 }
