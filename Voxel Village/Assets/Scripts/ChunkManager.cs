@@ -21,6 +21,7 @@ public class ChunkManager : MonoBehaviour
     // Chunk-related variables
     public static int chunkSize = 20;
     public static float chunkHeightStep = 1f;
+    public static int waterLevel = 3;
     public Transform playerTransform;
     private int currentPlayerChunkID;
     public int renderRadius = 2;
@@ -117,9 +118,11 @@ public class ChunkManager : MonoBehaviour
                 // Get the Perlin value for the new chunk
                 float perlin = PerlinNoiseGenerator.GetRandomValue(chunkIDtoPoint2D(id));
                 c.GetComponent<Chunk>().SetPerlinValue(perlin);
+                c.GetComponent<Chunk>().SetChunkType();
                 c.GetComponent<Chunk>().InitializeGround();
                 c.GetComponent<Chunk>().SetPlayerTransform(playerTransform);
-                c.GetComponent<Chunk>().AttemptToGenerateBuilding(1);
+                c.GetComponent<Chunk>().AttemptToGenerateBuilding(5);
+                c.GetComponent<Chunk>().GenerateWater();
                 c.GetComponent<Chunk>().EnableChunk();
                 allSeenChunks.Add(id, c);
                 currentChunks.Add(c);

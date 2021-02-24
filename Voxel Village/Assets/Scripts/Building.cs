@@ -329,13 +329,13 @@ public class Building : MonoBehaviour
         }
 
         // Add the roof
-        GameObject roof = Instantiate(floorPrefab);
+        /*GameObject roof = Instantiate(floorPrefab);
         roof.GetComponent<Floor>().SetXWidth(footprint.xWidth - 2);
         roof.GetComponent<Floor>().SetZWidth(footprint.zWidth - 2);
         roof.GetComponent<Floor>().CreateVoxel(true);
         roof.transform.parent = transform;
-        roof.transform.localPosition = new Vector3(0, yCenter + 1f, 0);
+        roof.transform.localPosition = new Vector3(0, yCenter + 1f, 0);*/
 
-        gameObjects.Add(roof);
+        //gameObjects.Add(roof);
     }
 }

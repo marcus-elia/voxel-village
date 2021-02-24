@@ -49,12 +49,14 @@ MonoBehaviour:
     type: 3}
   buildingPrefab: {fileID: 4042997739536456579, guid: 1084bc3efedb19c44930f0a82ba79e27,
     type: 3}
-  lowMaterial: {fileID: 2100000, guid: 6196de60bff73104a93344d894581dd5, type: 2}
-  highMaterial: {fileID: 2100000, guid: 336186039d8e2164a8c6028aebe76030, type: 2}
+  waterPrefab: {fileID: 6190663914134052576, guid: 19705f032f18c1f46b1bdbfc83aea9e7,
+    type: 3}
+  grass: {fileID: 2100000, guid: 6196de60bff73104a93344d894581dd5, type: 2}
+  pavement: {fileID: 2100000, guid: 7121ade1560b7a64eaa7b07901ff48d7, type: 2}
+  sand: {fileID: 2100000, guid: 320f46e74da0d1140b1df18cf36e7d9d, type: 2}
   redRC: {fileID: 2800000, guid: 1b3b8d05b6fbe0e479ba0eec4a52016a, type: 3}
   blueRC: {fileID: 2800000, guid: 78a6dc9fe34a6c44390cd17e3223de6c, type: 3}
   greenRC: {fileID: 2800000, guid: 09dd47dbdafc9f7478fbf5d524da2725, type: 3}
-  whiteRC: {fileID: 2800000, guid: fe181d65a0b11454397dd65829c6979c, type: 3}
   yellowRC: {fileID: 2800000, guid: 1f3def2e3eb0c194ebb861e626b034a0, type: 3}
   orangeRC: {fileID: 2800000, guid: 2992cb3f43c6c434fa28bf83f610c916, type: 3}
   cyanRC: {fileID: 2800000, guid: 27200a9b1bdb34044bf078e413936af9, type: 3}

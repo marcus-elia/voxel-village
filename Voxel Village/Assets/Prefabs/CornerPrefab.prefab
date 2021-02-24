@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8326837583014484186}
   - component: {fileID: -7984754745160497975}
   m_Layer: 0
-  m_Name: Corner
+  m_Name: CornerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,3 +46,4 @@ MonoBehaviour:
   cubePrefab: {fileID: 1834473214506367465, guid: 2f4ca76442448374ead85b5bdbc46f5b,
     type: 3}
   cornerMat: {fileID: 2100000, guid: b1ac2151324b94c4dbc2201a4496e3b3, type: 2}
+  whiteRC: {fileID: 2800000, guid: fe181d65a0b11454397dd65829c6979c, type: 3}

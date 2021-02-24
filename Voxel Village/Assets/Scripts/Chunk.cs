@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ChunkType { Village, Lake, Mountain };
 
 public class Chunk : MonoBehaviour
 {
@@ -25,21 +26,26 @@ public class Chunk : MonoBehaviour
     public GameObject groundPrefab;
     public GameObject cubePrefab;
     public GameObject buildingPrefab;
+    public GameObject waterPrefab;
 
-    public Material lowMaterial;
-    public Material highMaterial;
+    private ChunkType chunkType;
+    private bool hasWater;
+
+    public Material grass;
+    public Material pavement;
+    public Material sand;
 
     public Texture redRC;
     public Texture blueRC;
     public Texture greenRC;
-    public Texture whiteRC;
     public Texture yellowRC;
     public Texture orangeRC;
     public Texture cyanRC;
     public Texture magentaRC;
-    public static int numTextures = 8;
+    public static int numTextures = 7;
 
     private GameObject ground;
+    private GameObject water;
 
     private Transform playerTransform;
 
@@ -61,6 +67,10 @@ public class Chunk : MonoBehaviour
     public void EnableChunk()
     {
         ground.SetActive(true);
+        if(hasWater)
+        {
+            water.SetActive(true);
+        }
         for(int i = 0; i < buildings.Count; i++)
         {
             buildings[i].GetComponent<Building>().EnableRendering();
@@ -70,6 +80,10 @@ public class Chunk : MonoBehaviour
     public void DisableChunk()
     {
         ground.SetActive(false);
+        if(hasWater)
+        {
+            water.SetActive(false);
+        }
         for (int i = 0; i < buildings.Count; i++)
         {
             buildings[i].GetComponent<Building>().DisableRendering();
@@ -82,13 +96,17 @@ public class Chunk : MonoBehaviour
         ground = Instantiate(groundPrefab);
         ground.transform.position = transform.position + Vector3.up*groundHeight/2;
         ground.transform.localScale = new Vector3(sideLength, groundHeight, sideLength);
-        if(groundHeight < perlinResolution*groundHeightStep / 2)
+        if(chunkType == ChunkType.Lake)
         {
-            ground.GetComponent<Renderer>().material = lowMaterial;
+            ground.GetComponent<Renderer>().material = sand;
+        }
+        else if(chunkType == ChunkType.Village)
+        {
+            ground.GetComponent<Renderer>().material = pavement;
         }
         else
         {
-            ground.GetComponent<Renderer>().material = highMaterial;
+            ground.GetComponent<Renderer>().material = grass;
         }
     }
     public void SetChunkID(int inputID)
@@ -115,6 +133,21 @@ public class Chunk : MonoBehaviour
     {
         groundHeight = perlinValue * groundHeightStep;
     }
+    public void SetChunkType()
+    {
+        if(groundHeight < perlinResolution / 4f)
+        {
+            chunkType = ChunkType.Lake;
+        }
+        else if(groundHeight < 9*perlinResolution/10f)
+        {
+            chunkType = ChunkType.Village;
+        }
+        else
+        {
+            chunkType = ChunkType.Mountain;
+        }
+    }
 
     // Returns a random point on the plane of this chunk, that is not within buffer of the border
     private Vector3 getRandomPoint(float buffer)
@@ -126,6 +159,10 @@ public class Chunk : MonoBehaviour
 
     public void AttemptToGenerateBuilding(int numAttempts)
     {
+        if(chunkType != ChunkType.Village)
+        {
+            return;
+        }
         int i = 0;
         while (i < numAttempts)
         {
@@ -145,6 +182,20 @@ public class Chunk : MonoBehaviour
                 CreateBuilding(info, centerBase);
             }
         }
+    }
+
+    public void GenerateWater()
+    {
+        if(chunkType != ChunkType.Lake || groundHeight >= ChunkManager.waterLevel)
+        {
+            hasWater = false;
+            return;
+        }
+
+        water = Instantiate(waterPrefab);
+        water.transform.localScale = new Vector3(sideLength, ChunkManager.waterLevel - groundHeight, sideLength);
+        water.transform.position = new Vector3(chunkCoords.x * sideLength + sideLength / 2, groundHeight + (ChunkManager.waterLevel - groundHeight) / 2f, chunkCoords.z * sideLength + sideLength / 2);
+        hasWater = true;
     }
 
     private bool FootprintsOverlap(Point2D corner1, int w1, int h1, Point2D corner2, int w2, int h2)
@@ -255,13 +306,9 @@ public class Chunk : MonoBehaviour
         }
         else if(rand < 5f / numTextures)
         {
-            return whiteRC;
-        }
-        else if(rand < 6f / numTextures)
-        {
             return orangeRC;
         }
-        else if(rand < 7f / numTextures)
+        else if(rand < 6f / numTextures)
         {
             return cyanRC;
         }

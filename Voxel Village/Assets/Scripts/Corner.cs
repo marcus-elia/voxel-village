@@ -8,6 +8,7 @@ public class Corner : MonoBehaviour
     public GameObject cubePrefab;
 
     public Material cornerMat;
+    public Texture whiteRC;
 
     private int height;
     private GameObject voxel;
@@ -41,7 +42,8 @@ public class Corner : MonoBehaviour
     {
         voxel = Instantiate(cubePrefab);
         voxel.transform.parent = transform;
-        voxel.GetComponent<Renderer>().material = cornerMat;
+        voxel.GetComponent<Renderer>().material.mainTexture = whiteRC;
+        voxel.GetComponent<Renderer>().material.mainTextureScale = new Vector2(1, height);
         voxel.transform.localScale = new Vector3(1f, height, 1f);
     }
 }
