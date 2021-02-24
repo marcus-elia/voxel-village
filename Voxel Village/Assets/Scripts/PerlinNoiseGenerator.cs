@@ -13,11 +13,8 @@ public class PerlinNoiseGenerator : MonoBehaviour
     // Compute ((ax + by + c) % m) / m
     public static float GetFixedValue(int x, int y)
     {
-        float value = (a * x / fixedDistance + b * y / fixedDistance + c) % modulus;
-        if(value < 0) // Correct for % returning negatives
-        {
-            value += modulus;
-        }
+        float value = Mod((a * x / fixedDistance + b * y / fixedDistance + c), modulus);
+        
         return value / (float)modulus;
     }
 
@@ -28,10 +25,10 @@ public class PerlinNoiseGenerator : MonoBehaviour
         float topRight = GetFixedValue(NearestMultipleUp(x, fixedDistance), NearestMultipleUp(y, fixedDistance));
         float bottomLeft = GetFixedValue(NearestMultipleDown(x, fixedDistance), NearestMultipleDown(y, fixedDistance));
         float bottomRight = GetFixedValue(NearestMultipleUp(x, fixedDistance), NearestMultipleDown(y, fixedDistance));
-
+       
         // Interpolate
-        float xScale = (x % fixedDistance) / (float)fixedDistance;
-        float yScale = (y % fixedDistance) / (float)fixedDistance;
+        float xScale = Mod(x, fixedDistance) / (float)fixedDistance;
+        float yScale = Mod(y, fixedDistance) / (float)fixedDistance;
 
         float areaTL = xScale * (1 - yScale);
         float areaTR = (1 - xScale) * (1 - yScale);
@@ -44,7 +41,7 @@ public class PerlinNoiseGenerator : MonoBehaviour
     // The primary function
     public static float GetRandomValue(int x, int y)
     {
-        if(x % fixedDistance == 0 && y % fixedDistance == 0)
+        if(Mod(x, fixedDistance) == 0 && Mod(y, fixedDistance) == 0)
         {
             return GetFixedValue(x, y);
         }
@@ -62,11 +59,11 @@ public class PerlinNoiseGenerator : MonoBehaviour
     // Helper functions
     public static int NearestMultipleDown(int x, int distance)
     {
-        return x - (x % distance);
+        return x - Mod(x, distance);
     }
     public static int NearestMultipleUp(int x, int distance)
     {
-        return x - (x % distance) + distance;
+        return x - Mod(x, distance) + distance;
     }
 
     // Setters of static variables
@@ -85,5 +82,11 @@ public class PerlinNoiseGenerator : MonoBehaviour
     public static void SetModulus(int inputModulus)
     {
         modulus = inputModulus;
+    }
+
+    // Since Mod can return negatives, I think
+    public static int Mod(int a, int m)
+    {
+        return ((a % m) + m) % m;
     }
 }
