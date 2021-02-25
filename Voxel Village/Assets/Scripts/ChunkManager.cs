@@ -35,10 +35,7 @@ public class ChunkManager : MonoBehaviour
     private static int noiseScale = 2;
     private static int numOctaves = 3;
 
-    //public Slider renderRadiusSlider;
-
-    //public AudioSource backgroundMusic;
-    //public Slider audioSlider;
+    public Slider renderRadiusSlider;
 
 
     // Start is called before the first frame update
@@ -67,13 +64,11 @@ public class ChunkManager : MonoBehaviour
             updateChunks();
         }
         // Update chunks if render radius changed
-        //int newRad = (int)renderRadiusSlider.value;
-        //if (newRad != renderRadius)
-        //{
-        //    this.UpdateRenderRadius(newRad);
-        //}
-        // Update audio volume
-        //backgroundMusic.volume = audioSlider.value;
+        int newRad = (int)renderRadiusSlider.value;
+        if (newRad != renderRadius)
+        {
+            this.UpdateRenderRadius(newRad);
+        }
 
     }
 

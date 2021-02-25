@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip clip1;
     public AudioClip clip2;
     public AudioClip clip3;
+
+    public Slider audioSlider;
 
     private int currentClip = 2;
 
@@ -26,6 +29,10 @@ public class AudioManager : MonoBehaviour
         {
             ChooseNextAudio();
         }
+
+
+        // Update audio volume
+        audioSource.volume = audioSlider.value;
     }
 
     private void ChooseNextAudio()
