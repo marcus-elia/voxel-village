@@ -16,8 +16,11 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
+    public Transform centerCheck;
+    public float wallDistance = 0.5f;
 
     private bool isGrounded;
+    private bool isTouchingWall;
 
     Vector3 velocity;
 
@@ -25,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        isTouchingWall = Physics.CheckSphere(centerCheck.position, wallDistance, groundMask);
 
         if (isGrounded && velocity.y < 0)
         {
@@ -42,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(move * speed * Time.deltaTime);
 
-        if (isGrounded && Input.GetButtonDown("Jump"))
+        if ((isGrounded || isTouchingWall) && Input.GetButtonDown("Jump"))
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
