@@ -318,5 +318,11 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    // Getter
+    public float GetGroundHeight()
+    {
+        return groundHeight;
+    }
+
 }
 

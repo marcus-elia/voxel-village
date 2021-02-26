@@ -23,6 +23,7 @@ public class ChunkManager : MonoBehaviour
     public static float chunkHeightStep = 1f;
     public static int waterLevel = 3;
     public Transform playerTransform;
+    public float playerHeight;
     private int currentPlayerChunkID;
     public int renderRadius = 2;
     private Dictionary<int, GameObject> allSeenChunks;
@@ -52,6 +53,10 @@ public class ChunkManager : MonoBehaviour
         allSeenChunks = new Dictionary<int, GameObject>();
         currentChunks = new List<GameObject>();
         updateChunks();
+
+        // Move the player to be on the ground
+        float playerY = allSeenChunks[0].GetComponent<Chunk>().GetGroundHeight() + playerHeight/2f;
+        playerTransform.position = new Vector3(playerTransform.position.x, playerY, playerTransform.position.z);
 
     }
 
