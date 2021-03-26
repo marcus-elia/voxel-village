@@ -23,10 +23,19 @@ public class Chunk : MonoBehaviour
     private static float alternatingWindowsProb = 0.65f;
     private static float centeredWindowsProb = 1.0f;
 
+    // Tree properties
+    private static float minLeavesRadius = 1.2f;
+    private static float maxLeavesRadius = 2.5f;
+    private static float minTrunkRadius = 0.2f;
+    private static float maxTrunkRadius = 0.5f;
+    private static float minTrunkHeight = 4f;
+    private static float maxTrunkHeight = 8f;
+
     public GameObject groundPrefab;
     public GameObject cubePrefab;
     public GameObject buildingPrefab;
     public GameObject waterPrefab;
+    public GameObject treePrefab;
 
     private ChunkType chunkType;
     private bool hasWater;
@@ -52,6 +61,7 @@ public class Chunk : MonoBehaviour
     // Keep track of buildings
     private List<BuildingInfo> footprints = new List<BuildingInfo>();
     private List<GameObject> buildings = new List<GameObject>();
+    private List<GameObject> trees = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -75,6 +85,10 @@ public class Chunk : MonoBehaviour
         {
             buildings[i].GetComponent<Building>().EnableRendering();
         }
+        for(int i = 0; i < trees.Count; i++)
+        {
+            trees[i].GetComponent<Tree>().EnableRendering();
+        }
     }
 
     public void DisableChunk()
@@ -84,9 +98,13 @@ public class Chunk : MonoBehaviour
         {
             water.SetActive(false);
         }
-        for (int i = 0; i < buildings.Count; i++)
+        for(int i = 0; i < buildings.Count; i++)
         {
             buildings[i].GetComponent<Building>().DisableRendering();
+        }
+        for(int i = 0; i < trees.Count; i++)
+        {
+            trees[i].GetComponent<Tree>().DisableRendering();
         }
     }
 
@@ -184,6 +202,31 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    public void AttemptToGenerateTrees(int numAttempts)
+    {
+        if (chunkType != ChunkType.Mountain)
+        {
+            return;
+        }
+        int i = 0;
+        while (i < numAttempts)
+        {
+            i++;
+            float randomLeavesRadius = Random.Range(minLeavesRadius, maxLeavesRadius);
+            float randomTrunkRadius = Random.Range(minTrunkRadius, maxTrunkRadius);
+            float randomTrunkHeight = Random.Range(minTrunkHeight, maxTrunkHeight);
+
+            float potentialX = Random.Range(randomLeavesRadius, sideLength - randomLeavesRadius);
+            float potentialZ = Random.Range(randomLeavesRadius, sideLength - randomLeavesRadius);
+
+            if (!OverlapsExistingTree(randomLeavesRadius, potentialX, potentialZ))
+            {
+                Vector3 centerBase = GetWorldCoordinates(0, 0) + new Vector3(potentialX, 0, potentialZ);
+                CreateTree(centerBase, randomLeavesRadius, randomTrunkRadius, randomTrunkHeight);
+            }
+        }
+    }
+
     public void GenerateWater()
     {
         if(chunkType != ChunkType.Lake || groundHeight >= ChunkManager.waterLevel)
@@ -222,13 +265,30 @@ public class Chunk : MonoBehaviour
         return false;
     }
 
+    private bool OverlapsExistingTree(float leavesRadius, float x, float z)
+    {
+        Vector2 curLoc = new Vector2(sideLength*chunkCoords.x + x, sideLength * chunkCoords.z + z);
+        for(int i = 0; i < trees.Count; i++)
+        {
+            if(Vector2.Distance(trees[i].GetComponent<Tree>().GetXZCoords(), curLoc) < leavesRadius + trees[i].GetComponent<Tree>().GetLeavesRadius())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Given that p is an index of a square in this chunk, find the actual world
     // coordinates of the bottom left of the square
     public Vector3 GetWorldCoordinates(Point2D p)
     {
-        float x = chunkCoords.x * sideLength + p.x;
-        float z = chunkCoords.z * sideLength + p.z;
-        return new Vector3(x, groundHeight, z);
+        return GetWorldCoordinates(p.x, p.z);
+    }
+    public Vector3 GetWorldCoordinates(float x, float z)
+    {
+        float newX = chunkCoords.x * sideLength + x;
+        float newZ = chunkCoords.z * sideLength + z;
+        return new Vector3(newX, groundHeight, newZ);
     }
     public Vector3 CalculateBuildingCenterBase(Point2D potentialCorner, int randXDim, int randZDim)
     {
@@ -252,6 +312,16 @@ public class Chunk : MonoBehaviour
         building.GetComponent<Building>().CreateVoxels();
         footprints.Add(info);
         buildings.Add(building);
+    }
+
+    private void CreateTree(Vector3 centerBase, float leavesRadius, float trunkRadius, float trunkHeight)
+    {
+        GameObject tree = Instantiate(treePrefab);
+        tree.transform.position = centerBase;
+        tree.GetComponent<Tree>().SetLeavesRadius(leavesRadius);
+        tree.GetComponent<Tree>().SetTrunkRadius(trunkRadius);
+        tree.GetComponent<Tree>().SetTrunkHeight(trunkHeight);
+        tree.GetComponent<Tree>().CreateTree();
     }
 
     private WindowPlan ChooseRandomWindowPlan()

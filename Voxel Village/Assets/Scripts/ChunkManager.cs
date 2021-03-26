@@ -122,6 +122,7 @@ public class ChunkManager : MonoBehaviour
                 c.GetComponent<Chunk>().InitializeGround();
                 c.GetComponent<Chunk>().SetPlayerTransform(playerTransform);
                 c.GetComponent<Chunk>().AttemptToGenerateBuilding(5);
+                c.GetComponent<Chunk>().AttemptToGenerateTrees(5);
                 c.GetComponent<Chunk>().GenerateWater();
                 c.GetComponent<Chunk>().EnableChunk();
                 allSeenChunks.Add(id, c);

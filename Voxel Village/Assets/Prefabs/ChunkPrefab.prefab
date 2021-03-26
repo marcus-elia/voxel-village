@@ -51,6 +51,8 @@ MonoBehaviour:
     type: 3}
   waterPrefab: {fileID: 6190663914134052576, guid: 19705f032f18c1f46b1bdbfc83aea9e7,
     type: 3}
+  treePrefab: {fileID: 1062273388040299109, guid: 1dc10e9476dc29c44ae5ee6c9f9f3f71,
+    type: 3}
   grass: {fileID: 2100000, guid: 6196de60bff73104a93344d894581dd5, type: 2}
   pavement: {fileID: 2100000, guid: 7121ade1560b7a64eaa7b07901ff48d7, type: 2}
   sand: {fileID: 2100000, guid: 320f46e74da0d1140b1df18cf36e7d9d, type: 2}
