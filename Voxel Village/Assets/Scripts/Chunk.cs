@@ -322,6 +322,7 @@ public class Chunk : MonoBehaviour
         tree.GetComponent<Tree>().SetTrunkRadius(trunkRadius);
         tree.GetComponent<Tree>().SetTrunkHeight(trunkHeight);
         tree.GetComponent<Tree>().CreateTree();
+        trees.Add(tree);
     }
 
     private WindowPlan ChooseRandomWindowPlan()
