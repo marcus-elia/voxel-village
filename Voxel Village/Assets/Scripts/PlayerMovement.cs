@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
 {
     public CharacterController controller;
 
+    public GameObject scoreKeeper;
+
     public float speed = 4f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
@@ -52,6 +54,9 @@ public class PlayerMovement : MonoBehaviour
         }
 
         controller.Move(velocity * Time.deltaTime);
+
+        // Update possible max height
+        scoreKeeper.GetComponent<ScoreKeeper>().CheckPlayerHeight(groundCheck.position.y);
     }
 }
 

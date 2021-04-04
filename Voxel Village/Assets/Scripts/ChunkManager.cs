@@ -22,13 +22,16 @@ public class ChunkManager : MonoBehaviour
     public static int chunkSize = 20;
     public static float chunkHeightStep = 1f;
     public static int waterLevel = 3;
-    public Transform playerTransform;
-    public float playerHeight;
     private int currentPlayerChunkID;
     public int renderRadius = 2;
     private Dictionary<int, GameObject> allSeenChunks;
     private List<GameObject> currentChunks;
 
+    // Keep track of where the player is
+    public Transform playerTransform;
+    public float playerHeight;
+
+    public GameObject scoreKeeper;
     public GameObject ChunkPrefab;
 
     // Perlin noise variables
@@ -84,6 +87,7 @@ public class ChunkManager : MonoBehaviour
         if (newChunkID != currentPlayerChunkID)
         {
             currentPlayerChunkID = newChunkID;
+            scoreKeeper.GetComponent<ScoreKeeper>().VisitChunk(newChunkID);
             return true;
         }
         return false;
@@ -118,6 +122,8 @@ public class ChunkManager : MonoBehaviour
                 // Get the Perlin value for the new chunk
                 float perlin = PerlinNoiseGenerator.GetRandomValue(chunkIDtoPoint2D(id));
                 c.GetComponent<Chunk>().SetPerlinValue(perlin);
+
+                // Initialize all chunk properties and generate its components
                 c.GetComponent<Chunk>().SetChunkType();
                 c.GetComponent<Chunk>().InitializeGround();
                 c.GetComponent<Chunk>().SetPlayerTransform(playerTransform);
@@ -127,6 +133,9 @@ public class ChunkManager : MonoBehaviour
                 c.GetComponent<Chunk>().EnableChunk();
                 allSeenChunks.Add(id, c);
                 currentChunks.Add(c);
+
+                // Update the number of generated chunks
+                scoreKeeper.GetComponent<ScoreKeeper>().GenerateChunk(id);
             }
         }
     }
