@@ -7,6 +7,7 @@ public class PauseMenu : MonoBehaviour
     public static bool IsPaused = true;
 
     public GameObject pauseMenuUI;
+    public GameObject cameraManager;
 
     void Start()
     {
@@ -55,4 +56,8 @@ public class PauseMenu : MonoBehaviour
         Application.Quit();
     }
 
+    public void Toggle360()
+    {
+        cameraManager.GetComponent<CameraManager>().Toggle360();
+    }
 }
