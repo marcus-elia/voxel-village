@@ -1816,7 +1816,7 @@ MonoBehaviour:
   audioSource: {fileID: 963194230}
   clip1: {fileID: 8300000, guid: 1ea07bf179f19c24f841e02dedd7014d, type: 3}
   clip2: {fileID: 8300000, guid: 6a6f8286fe19439488ea4e12eac3423c, type: 3}
-  clip3: {fileID: 8300000, guid: 768d4afe33f283c46bdb639e8b740ea4, type: 3}
+  clip3: {fileID: 8300000, guid: 085498dc2b0790146a9a9918d3a4b61d, type: 3}
   audioSlider: {fileID: 787910173}
 --- !u!4 &858762016
 Transform:
